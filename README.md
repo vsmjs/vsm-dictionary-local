@@ -29,7 +29,7 @@ This is VsmDictionaryLocal:
 
 - It extends the VsmDictionary parent class, and provides
   a concrete implementation that fully implements the vsm-dictionary
-  [specification](https://github.com/vsmjs/vsm-dictionary/Dictionary.spec.md).
+  [specification](https://github.com/vsmjs/vsm-dictionary/blob/master/Dictionary.spec.md).
   - i.e. it has the complete Create, Read, Update, Delete, search,
     sort, filter, etc. functionality for terms, subdictionary-info objects, etc.
 - It does not use an online server for data storage or lookup.
@@ -54,7 +54,7 @@ Because of the above,
 ## Specification
 
 Apart from following the parent class
-[specification](https://github.com/vsmjs/vsm-dictionary/Dictionary.spec.md),
+[specification](https://github.com/vsmjs/vsm-dictionary/blob/master/Dictionary.spec.md),
 VsmDictionaryLocal follows the additional the spec described in
 [DictionaryLocal.spec.md](DictionaryLocal.spec.md).  
 &bull; <span style="font-size: smaller;">
