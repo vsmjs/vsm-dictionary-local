@@ -1,5 +1,6 @@
 const DictionaryLocal = require('./DictionaryLocal');
 const {deepClone} = require('./helpers/util');
+const sinon = require('sinon');
 const chai = require('chai');  chai.should();
 const expect = chai.expect;
 
@@ -1456,6 +1457,84 @@ describe('DictionaryLocal.js', function() {
           });
         })
       })
+    });
+  });
+
+
+  describe('option `delay`', function() {
+    var count;
+    var inc = () => ++count;
+    var clock;  // See https://stackoverflow.com/questions/17446064
+
+    beforeEach(function() {
+      count = 0;
+      clock = sinon.useFakeTimers();
+    });
+
+    afterEach(function() {
+      clock.restore();
+    });
+
+    it('uses the constructor option `delay` in all async public functions',
+      function(cb) {
+      var dict = new DictionaryLocal({delay: 100});
+      dict.addDictInfos   ([], inc);
+      dict.updateDictInfos([], inc);
+      dict.deleteDictInfos([], inc);
+      dict.addEntries     ([], inc);
+      dict.updateEntries  ([], inc);
+      dict.deleteEntries  ([], inc);
+      dict.addRefTerms    ([], inc);
+      dict.deleteRefTerms ([], inc);
+      dict.getDictInfos   ({}, inc);
+      dict.getEntries     ({}, inc);
+      dict.getRefTerms    ({}, inc);
+      dict.getMatchesForString('', {}, inc);
+      clock.tick(99);
+      count.should.equal(0);  // `inc` was not yet called by any function.
+      clock.tick(1);
+      count.should.equal(12);  // `inc` has been called back by all functions now.
+      cb();
+    });
+
+    it('calls a callback on the next event loop with no delay, ' +
+      'if an invalid delay value was given', function(cb) {
+      var dict = new DictionaryLocal({delay: -100});
+      dict.getMatchesForString('', {}, inc);  // We test with this function only.
+      clock.tick(1);
+      count.should.equal(1);
+      cb();
+    });
+
+    it('calls a callback after a given delay value', function(cb) {
+      var dict = new DictionaryLocal({delay: 200});
+      dict.getMatchesForString('', {}, inc);
+      clock.tick(199);
+      count.should.equal(0);
+      clock.tick(1);
+      count.should.equal(1);
+      cb();
+    });
+
+    it('calls a callback after a given delay range', function(cb) {
+      var dict = new DictionaryLocal({delay: [300, 500]});
+      dict.getMatchesForString('', {}, inc);
+      clock.tick(299);
+      count.should.equal(0);
+      clock.tick(201);
+      count.should.equal(1);
+      cb();
+    });
+
+    it('-> setDelay() can set a new delay value', function(cb) {
+      var dict = new DictionaryLocal({delay: 100});
+      dict.setDelay(250);
+      dict.getMatchesForString('', {}, inc);
+      clock.tick(249);
+      count.should.equal(0);
+      clock.tick(1);
+      count.should.equal(1);
+      cb();
     });
   });
 });

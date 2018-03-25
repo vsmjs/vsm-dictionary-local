@@ -34,43 +34,49 @@ module.exports = class DictionaryLocal extends Dictionary {
 
     this.perPageDefault = opt.perPageDefault || perPageDefault;
     this.perPageMax     = opt.perPageMax     || perPageMax;
+
+    this.delay = opt.delay || 0;
   }
 
 
   // --- ADD/UPDATE/DELETE ONE OR MORE DICTINFOS/ENTRIES/REFTERMS ---
 
   addDictInfos(dictInfos, cb) {
-    callAsyncOE(dictInfos, this._addDictInfo.bind(this), this._cbDict(cb));
+    callAsyncOE(dictInfos, this._addDictInfo.bind(this), this.delay,
+                this._cbDict(cb));
   }
 
   updateDictInfos(dictInfos, cb) {
-    callAsyncOE(dictInfos, this._updateDictInfo.bind(this), this._cbDict(cb));
+    callAsyncOE(dictInfos, this._updateDictInfo.bind(this), this.delay,
+                this._cbDict(cb));
   }
 
   deleteDictInfos(dictIDs, cb) {
-    callAsyncOE(dictIDs, this._deleteDictInfo.bind(this), cb);
+    callAsyncOE(dictIDs, this._deleteDictInfo.bind(this), this.delay, cb);
   }
 
 
   addEntries(entries, cb) {
-    callAsyncOE(entries, this._addEntry.bind(this), this._cbEntr(cb));
+    callAsyncOE(entries, this._addEntry.bind(this), this.delay,
+                this._cbEntr(cb));
   }
 
   updateEntries(entryLikes, cb) {
-    callAsyncOE(entryLikes, this._updateEntry.bind(this), this._cbEntr(cb));
+    callAsyncOE(entryLikes, this._updateEntry.bind(this), this.delay,
+                this._cbEntr(cb));
   }
 
   deleteEntries(conceptIDs, cb) {
-    callAsyncOE(conceptIDs, this._deleteEntry.bind(this), cb);
+    callAsyncOE(conceptIDs, this._deleteEntry.bind(this), this.delay, cb);
   }
 
 
   addRefTerms(refTerms, cb) {
-    callAsyncOE(refTerms, this._addRefTerm.bind(this), cb);
+    callAsyncOE(refTerms, this._addRefTerm.bind(this), this.delay, cb);
   }
 
   deleteRefTerms(refTerms, cb) {
-    callAsyncOE(refTerms, this._deleteRefTerm.bind(this), cb);
+    callAsyncOE(refTerms, this._deleteRefTerm.bind(this), this.delay, cb);
   }
 
 
@@ -81,6 +87,12 @@ module.exports = class DictionaryLocal extends Dictionary {
 
   _cbEntr(cb) {
     return (...args) => { this._sortEntries();  cb(...args); }
+  }
+
+
+
+  setDelay(delay) {  // Use a new `delay` value.
+    this.delay = delay || 0;
   }
 
 
@@ -304,7 +316,7 @@ module.exports = class DictionaryLocal extends Dictionary {
       (a, b) => strcmp(a.id, b.id);  // Default: sort by `id`.
 
     var arr = this._arrayQuery(this.dictInfos, filter, sort, o.page, o.perPage);
-    callAsync(cb, null, { items: arr });
+    callAsync(cb, this.delay, null, { items: arr });
   }
 
 
@@ -324,7 +336,7 @@ module.exports = class DictionaryLocal extends Dictionary {
         (a, b) => strcmp(a.dictID, b.dictID) || strcmp(a.id, b.id); // =Default.
 
     var arr = this._arrayQuery(this.entries, filter, sort, o.page, o.perPage);
-    callAsync(cb, null, { items: Dictionary.zPropPrune(arr, o.z) });
+    callAsync(cb, this.delay, null, { items: Dictionary.zPropPrune(arr, o.z) });
   }
 
 
@@ -334,7 +346,7 @@ module.exports = class DictionaryLocal extends Dictionary {
     var sort = (a, b) => strcmp(a, b);
 
     var arr = this._arrayQuery(this.refTerms, filter, sort, o.page, o.perPage);
-    callAsync(cb, null, { items: arr });
+    callAsync(cb, this.delay, null, { items: arr });
   }
 
 
@@ -397,7 +409,7 @@ module.exports = class DictionaryLocal extends Dictionary {
     );
 
     super.addExtraMatchesForString(str, arr, o, (err, res) => {
-      callAsync(cb, null, { items: err ? arr : res });
+      callAsync(cb, this.delay, null, { items: err ? arr : res });
     });
   }
 

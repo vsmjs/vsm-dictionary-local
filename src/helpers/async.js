@@ -39,11 +39,28 @@ function asyncMap(elems, func, cb) {
 
 
 /*
-  Makes a call to `f` with given arguments, in a truly asynchronous way,
-  i.e. on new event loop.
+  If given a range (array) of two numbers, a random value in that range;
+  if given a positive number, returns it;
+  else returns 0.
 */
-function callAsync(f, ...args) {
-  setTimeout(() => f(...args), 0);
+function _getDelayNumber(delay) {
+  if(Array.isArray(delay)  &&  delay.length >= 2) {
+    var min = Math.max(+delay[0], 0);
+    var max = Math.max(+delay[1], min);
+    return min + (Math.random() * (max - min))
+  }
+  else  return Math.max(+delay, 0);
+}
+
+
+
+/*
+  Makes a call to `f` with given arguments, in a truly asynchronous way,
+  i.e. on the next event-loop; and with a custom delay in milliseconds.
+*/
+function callAsync(f, delay, ...args) {
+  delay = _getDelayNumber(delay);
+  setTimeout(() => f(...args), delay);
 }
 
 
@@ -57,14 +74,17 @@ function callAsync(f, ...args) {
       after making `errors` simply `null` if all errors were `null`.
   + Moreover, it makes this happen in a in a guaranteed truly asynchronous way:
     it calls `func` on the next event-loop, or if `func` is never called (when
-    elems is an empty array), then calls `cb` on the next event-loop instead.
+    elems is an empty array), then calls `cb` on the next event-loop instead;
+    and with a custom delay in milliseconds.
 */
-function callAsyncForOneOrEach(elems, func, cb) {
-  if (!Array.isArray(elems))  makeAsync(func)(elems, makeAsync(cb));
+function callAsyncForOneOrEach(elems, func, delay, cb) {
+  delay = _getDelayNumber(delay);
+
+  if (!Array.isArray(elems))  makeAsync(func)(elems, cb);
   else if (!elems.length)  makeAsync(cb)(null, []);
   else  asyncMap(elems, (e, cbf) => makeAsync(func)(e, cbf), cb);
 
   function makeAsync(cb) {
-    return (...args) => callAsync(cb, ...args);
+    return (...args) => callAsync(cb, delay, ...args);
   }
 }

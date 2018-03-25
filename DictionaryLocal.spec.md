@@ -8,35 +8,50 @@ Note: we simply use the name 'DictionaryLocal' for VsmDictionaryLocal.
 INTRO
 -----
 `DictionaryLocal` is a local (=not on a remote server), in-memory implementation
-and subclass of the `Dictionary` parent class.
-
+and subclass of the `Dictionary` parent class.  
 So it stores 'entry'-type objects that can represent any semantic 'concept',
 through multiple synonyms ('terms'), it collects entries/terms of
 possibly several domain-specific 'sub-dictionaries', and it deals with any
 extra info for these entries, all in support of an Autocomplete for VSM-terms.
 
-+ Note: callbacks are called in a truly asynchronous way (via `setTimeout(,0)`,
-  i.e. on the next event-loop), in order to show consistent behavior.  
+In order to create a local dictionary in a convenient way, DictionaryLocal
+provides some extra functionality and augments some parent function definitions.
+
+Notes:
++ Callbacks are called in a truly asynchronous way (via `setTimeout(, 0)`,
+  i.e. on the next event-loop) in order to show consistent behavior.  
   This makes this local Dictionary implementation behave in the exact same way
   as one that interfaces with a remote server.
++ For basic data types and Get/Add/Update/Delete functionality:
+  see the parent class `Dictionary`, where these concepts and functions are
+  explained in detail.  
+  In particular, `DictionaryLocal` stores data in, and manages access to,
+  three arrays: `dictInfos`, `entries` (with 'entry'-type objects, as described
+  in `Dictionary`), and `refTerms`.
 
 
 &nbsp;  
-BASIC DATA TYPES AND 'GET'/'ADD'/'UPDATE'/'DELETE' FUNCTIONALITY
-----------------------------------------------------------------
-See the parent class `Dictionary`; there these concepts and functions are
-explained in detail.
-In particular, `DictionaryLocal` manages storage in and access to three arrays:
-`dictInfos`, `entries` (with 'entry'-type objects, as `Dictionary` describes),
-and `refTerms`.
+CONSTRUCTOR OPTIONS
+-------------------
+The constructor takes an `options` Object with additional, optional properties:
+
+- `dictData` and/or `refTerms`:  
+    these cause `addDictionaryData()` to be called, which is described in detail
+    further below.
+- `perPageDefault` and `perPageMax`: both {Number}:  
+    override the default behavior of how many items are returned per result-page
+    (for dictInfos/entries/refTerms/matches) by default or maximum, respectively.
+- `delay`: {Number|Array(Number)}: (default 0):  
+    Adds a delay before calling any of its public, async methods's callbacks.
+    This simulates interaction with a server more realistically.
+    + If it is a number, the delay will be that amount of milliseconds.
+    + If it is an array of two numbers, a minimum and a maximum value,
+      then the delay will be a random value in that range.
 
 
 &nbsp;  
 ADDITONAL 'ADD'-FUNCTIONALITY
 -----------------------------
-In order to create a local dictionary in a convenient way, DictionaryLocal
-provides some extra functionality and augments some parent function definitions.
-
 + One may call `addEntries()` with entries that have an {int} conceptID, rather
   than a {String} one.
   The entry's associated subdictionary-dictInfo's `f_id()` will convert it to a
@@ -45,8 +60,9 @@ provides some extra functionality and augments some parent function definitions.
     reference (`entryLike.dictID`), for converting the ID, may be absent there.
 
 + When adding a subdictionary's `dictInfo` (via `addInfoForSubdictionaries()`)
-  one can give it a custom `f_id()`. Or else a default function is used, to
-  convert an {int} conceptID to a {String} one, like: 39 --> 'DictID:0039'.
+  one can give it a custom `f_id()`, to convert any given {int} conceptID to a
+  {String} one. If none is given, then a default function will be used, like:
+  39 --> 'DictID:0039'.
   + `f_id()` will be called with arguments: `dictInfo` and `entry`.
   + Note: a dictInfo's `f_id()` is only used in subclass `DictionaryLocal`.
 
@@ -77,15 +93,10 @@ provides some extra functionality and augments some parent function definitions.
 
 
 &nbsp;  
-CONSTRUCTOR OPTIONS
--------------------
-The constructor takes an `options` Object with optional properties:
-
-- The `dictData` and/or `refTerms` option properties cause `addDictionaryData()`
-  to be called, as described above.
-- `perPageDefault` and `perPageMax` override the default behavior of how many
-  items are returned per result-page (for dictInfos/entries/refTerms/matches)
-  by default, or maximum, respectively.
+OTHER ADDITONAL FUNCTIONALITY
+-----------------------------
+- `this.setDelay()` sets a new value for the delay or delay-range, which will
+  be used from then onwards.
 
 
 &nbsp;  
