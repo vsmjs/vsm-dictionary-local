@@ -404,9 +404,13 @@ module.exports = class DictionaryLocal extends Dictionary {
 
     // Possibly add an exactly-matching refTerm, to the front of `arr`.
     var refTerm = this.refTerms.find(s => s.toLowerCase() == str);
-    if (refTerm)  arr.unshift(
-      {id: '', dictID: '', str: refTerm, descr: '[referring term]', type: 'R'}
-    );
+    if (refTerm)  arr.unshift({
+      id:     '',
+      dictID: '',
+      str:    refTerm,
+      descr:  this.matchDescrs.refTerm,  // Get this from the parent class.
+      type:   'R'
+    });
 
     super.addExtraMatchesForString(str, arr, o, (err, res) => {
       callAsync(cb, this.delay, null, { items: err ? arr : res });
