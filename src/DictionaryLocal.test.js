@@ -126,6 +126,18 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
+    it('adds a dictInfo with a custom `f_id` and `f_aci`, represented as ' +
+      'Functions', function(cb) {
+      dict.addDictInfos(di7f, err => {  // Same as above; but only test f_id/aci.
+        var N = 4;
+        dict.dictInfos[N]    .f_id( {id:'S'}, {id:3} )
+          .should.equal( di7f.f_id( {id:'S'}, {id:3} ) );
+        dict.dictInfos[N]    .f_aci(1)
+          .should.equal( di7f.f_aci(1) );
+        dict.deleteDictInfos(di7f.id, cb);
+      });
+    });
+
     it('makes a truly async callback, also for an empty array', function(cb) {
       dict.addDictInfos([], err => {
         expect(err).to.equal(null);

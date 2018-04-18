@@ -147,8 +147,17 @@ module.exports = class DictionaryLocal extends Dictionary {
       return cb(`dictInfo for '${di.id}' already exists`);
     }
     var dictInfo = {id: di.id, name: di.name};  // Omit invalid props.
-    if (di.f_aci)  eval('dictInfo.f_aci = ' + di.f_aci);  // Deserialize these..
-    if (di.f_id )  eval('dictInfo.f_id  = ' + di.f_id);  // ..optional func.s.
+
+    // Assign the optional functions, and deserialize them if necessary.
+    if (di.f_aci) {
+      if (typeof di.f_aci == 'function')  dictInfo.f_aci = di.f_aci;
+      else  eval('dictInfo.f_aci = ' + di.f_aci);
+    }
+    if (di.f_id ) {
+      if (typeof di.f_id == 'function')  dictInfo.f_id = di.f_id;
+      else  eval('dictInfo.f_id  = ' + di.f_id);
+    }
+
     this.dictInfos.push(dictInfo);
     return cb(null);  // Must use `return` here, for sync-calling compatibility.
   }
