@@ -148,15 +148,9 @@ module.exports = class DictionaryLocal extends Dictionary {
     }
     var dictInfo = {id: di.id, name: di.name};  // Omit invalid props.
 
-    // Assign the optional functions. First deserialize them if necessary.
-    if (di.f_aci) {
-      if (typeof di.f_aci == 'function')  dictInfo.f_aci = di.f_aci;
-      else  eval('dictInfo.f_aci = ' + di.f_aci);
-    }
-    if (di.f_id ) {
-      if (typeof di.f_id == 'function')  dictInfo.f_id = di.f_id;
-      else  eval('dictInfo.f_id  = ' + di.f_id);
-    }
+    // Assign optional functions; and also deserialize them if they are Strings.
+    if (di.f_aci)  eval('dictInfo.f_aci = ' + di.f_aci);
+    if (di.f_id )  eval('dictInfo.f_id  = ' + di.f_id);
 
     this.dictInfos.push(dictInfo);
     return cb(null);  // Must use `return` here, for sync-calling compatibility.
