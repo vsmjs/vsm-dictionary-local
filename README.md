@@ -82,17 +82,17 @@ Example that (only):
 const VsmDictionaryLocal = require('vsm-dictionary-local');
 
 var dict = new VsmDictionaryLocal();
-var dictInfo = {id: 'DictID_12', name: 'Example subdictionary'};
+var dictInfo = { id: 'DictID_12', name: 'Example subdictionary' };
 var entries = [
-  {id: 'URI:001', dictID: 'DictID_12', terms: ['aaa', 'synonym']},
-  {id: 'URI:002', dictID: 'DictID_12', terms: 'aab'},
-  {id: 'URI:003', dictID: 'DictID_12', terms: 'abc', descr: 'description'}
+  { id: 'URI:001', dictID: 'DictID_12', terms: ['aaa', 'synonym'] },
+  { id: 'URI:002', dictID: 'DictID_12', terms: 'aab' },
+  { id: 'URI:003', dictID: 'DictID_12', terms: 'abc', descr: 'description' }
 ];
 
 dict.addDictInfos(dictInfo, (err) => {  // Add 1 subdictionary-info object.
   dict.addEntries(entries, (err) => {   // Add 3 entries.
     dict.getMatchesForString('ab', {}, (err, res) => {  // Query for string 'ab'.
-      console.dir(res.items, {depth: 3});
+      console.dir(res.items, { depth: 3 });
     });
   });
 });
@@ -124,11 +124,14 @@ const VsmDictionaryLocal = require('vsm-dictionary-local');
 // Create.
 var dict = new VsmDictionaryLocal({
   dictData: [
-    {id: 'DictID_12',  name: 'Example subdictionary', entries: [
-      {id: 'URI:001', terms: ['aaa', 'synonym']},
-      {id: 'URI:002', terms: 'aab'},
-      {id: 'URI:003', terms: 'abc', descr: 'description'}
-    ]},
+    { id: 'DictID_12',
+      name: 'Example subdictionary',
+      entries: [
+        { id: 'URI:001', terms: ['aaa', 'synonym'] },
+        { id: 'URI:002', terms: 'aab' },
+        { id: 'URI:003', terms: 'abc', descr: 'description' }
+      ]
+    },
   ],
 });
 
