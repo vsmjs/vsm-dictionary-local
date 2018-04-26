@@ -50,38 +50,42 @@ The constructor takes an `options` Object with additional, optional properties:
 
 
 &nbsp;  
-ADDITONAL 'ADD'-FUNCTIONALITY
------------------------------
+ADDITIONAL 'ADD'-FUNCTIONALITY
+------------------------------
 + One may call `addEntries()` with entries that have an {int} conceptID, rather
-  than a {String} one.
-  The entry's associated subdictionary-dictInfo's `f_id()` will convert it to a
-  String which is unique within DictionaryLocal.
+  than a {String} one.  
+  The entry's associated subdictionary's dictInfo's `f_id()` (see below) will
+  convert it to a String which is unique within DictionaryLocal.
   + Note: this does not apply to `updateEntries()`, because the required dictID
     reference (`entryLike.dictID`), for converting the ID, may be absent there.
 
 + When adding a subdictionary's `dictInfo` (via `addInfoForSubdictionaries()`)
-  one can give it a custom `f_id()`, to convert any given {int} conceptID to a
-  {String} one. If none is given, then a default function will be used, like:
-  39 --> 'DictID:0039'.
+  one can give the `dictInfo` an additional property:  
+  a custom function `f_id()`.
+  + This function should convert any given {int} conceptID to a
+    {String} one, which is unique within DictionaryLocal.
+  + If none is given, then DictionaryLocal uses a default function when needed.
+  + E.g. it could convert `39` to `'DictID1:0039'`.
   + `f_id()` will be called with arguments: `dictInfo` and `entry`.
-  + Note: a dictInfo's `f_id()` is only used in subclass `DictionaryLocal`.
 
-+ `addDictionaryData(dictData, refTerms)` is a powerful convenience function.
++ `addDictionaryData(dictData, refTerms)` is a powerful convenience function.  
   It enables to add/update multiple subdictionaries's info and entries at once,
-  and with convenient simplifications. It executes *synchronously*.
-  - `dictData`: {Object|Array(Object)}:
-            is one, or a list of, to-add subdictionary/ies:
-    - each item is like a `dictInfo` object, but has one added property:
-      - `entries` {Array(Object)}`:
-            these are normal (as described in `Dictionary`) or *simplified*
-            'entry'-type Objects:
+  and with convenient simplifications. It executes **synchronously**.
+  - `dictData`: {Array(Object)}:  
+            is a list of data objects, one for each to-add subdictionary:
+    - each item is like a `dictInfo` object, but has *one added property*:
+      - `entries` {Array(Object)}:
+            these are normal (as described in `Dictionary`) or **simplified**
+            'entry'-type Objects:  
         + The  `dictID` property may be left away, because then
-          the dict-`id` from their encompassing subdictionary-info is used;
+          the dict-`id` from the encompassing `dictInfo` is used;
         + The `terms` can be simplified (as in any `Dictionary`) to any of:
           + {String}: a plain term-string;
           + {Object}: a term-Object, like `{str:, [style:], [descr:]}`;
           + {Array(String|Object)}: an array of a mix of the above two.
-  + All of this will be converted internally and stored as standard 'dictInfo'
+  - `refTerms`: {Array(String)}:  
+            is a list of refTerms.<br><br>
+  + All `dictData` will be converted internally and stored as standard 'dictInfo'
     and 'entry' objects, as they are described in the parent class `Dictionary`.
   + Any object (any dictInfo and entry), is first attempted to be added;
     and if that gave an error, then the update function is tried instead.
@@ -93,13 +97,13 @@ ADDITONAL 'ADD'-FUNCTIONALITY
 
 
 &nbsp;  
-OTHER ADDITONAL FUNCTIONALITY
------------------------------
+ADDITIONAL OTHER FUNCTIONALITY
+------------------------------
 - `this.setDelay()` sets a new value for the delay or delay-range, which will
   be used from then onwards.
 
 
 &nbsp;  
-ADDITONAL INTERNAL FUNCTIONALITY
---------------------------------
+ADDITIONAL INTERNAL FUNCTIONALITY
+---------------------------------
 - `this.entries` are sorted by dictID, then conceptID, for nice console-output.

@@ -39,10 +39,10 @@ describe('DictionaryLocal.js', function() {
     var di2u = {id: 'B', name: 'Name 2b'};
     var di5p = {id: '' , name: 'Name 5'};
     var di6p = {id: 'F', name: ''      };
-    var di7s = {id: 'G', name: 'Name 6',  // DictInfo with functions, given..
-          f_id : 'function (di, e) { return di.id + \':\' + e.id; }', // as..
-          f_aci: 'function (x) { return x * 10; }' };             // Strings.
-    var di7f = {id: 'G', name: 'Name 6',  // Same one, but how it looks after..
+    var di7s = {id: 'G', name: 'Name 6', // DictInfo, with toy functions given..
+          f_id : 'function (di, e) { return di.id + \':\' + e.id; }',    // as..
+          f_aci: 'function (x) { return x * 10; }' };                // Strings.
+    var di7f = {id: 'G', name: 'Name 6',   // Same one, but how it looks after..
           f_id : function (di, e) { return `${di.id}:${e.id}` },  // adding it.
           f_aci: function (x) { return x * 10; } };
 
