@@ -362,15 +362,16 @@ module.exports = class DictionaryLocal extends Dictionary {
 
   // --- SEARCH BY STRING: "GET MATCHES" FOR ENTRIES ---
 
-  getMatchesForString(str, options, cb) {
+  getMatchesForString(searchStr, options, cb) {
     var o = prepGetOptions(options, ['dictID'], ['dictID']);
 
     var arr = [];
+    var str = searchStr.toLowerCase();
+
     if (str) {
       // Build an array with just enough information for filtering and sorting
       // with arrayQuery(). It needs an item for _each_ term-str with its linked
       // entry. So, strings and entries can appear multiple times in the array.
-      str = str.toLowerCase();
       this.entries.forEach(e => {
         e.terms.forEach((t, p) => {  // `p`: term's position in `e.terms`.
           arr.push({str: t.str, dictID: e.dictID, e, p, id: e.id});
@@ -415,7 +416,7 @@ module.exports = class DictionaryLocal extends Dictionary {
       type:   'R'
     });
 
-    super.addExtraMatchesForString(str, arr, o, (err, res) => {
+    super.addExtraMatchesForString(searchStr, arr, o, (err, res) => {
       callAsync(cb, this.delay, null, { items: err ? arr : res });
     });
   }

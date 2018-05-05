@@ -1386,6 +1386,18 @@ describe('DictionaryLocal.js', function() {
       });
       count = 1;
     });
+    it('uses the original string for calling ' +
+      '`super.addExtraMatchesForString()`', function(cb) {
+      dict.getMatchesForString('1e3', {}, (err, res) => {
+        res.items.should.deep.equal([
+          {id: '00:1e+3', dictID: '00', str: '1e3', descr:'[number]', type:'N'}]);
+        dict.getMatchesForString('1E3', {}, (err, res) => {
+          res.items.should.deep.equal([
+            {id: '00:1e+3', dictID: '00', str: '1E3', descr:'[number]', type:'N'}]);
+          cb();
+        });
+      });
+    });
     it('returns no match for a number-string, when that is deactivated',
       function(cb) {
       var dict2 = new DictionaryLocal({numberMatchConfig: false});
