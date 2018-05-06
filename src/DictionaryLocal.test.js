@@ -966,7 +966,7 @@ describe('DictionaryLocal.js', function() {
   var s12c = s(e12, 2);  var t12c = s(e12, 2, 'T');
 
   // Make a match-objects for some refTerms.
-  var rm1 = {id:'', dictID:'', str:'it', descr:'[referring term]', type:'R'};
+  var rm1 = {id:'', dictID:'', str:'it', descr:'referring term', type:'R'};
   var r9 = 'i';  // A one-letter refTerm.
   var rm9 = Object.assign({}, rm1, {str: r9});
 
@@ -1373,14 +1373,14 @@ describe('DictionaryLocal.js', function() {
         // We don't test the exact value of the conceptID and dictID, because
         // here we use the defaults set in the parent class. So _NOT_ like this:
         // // res.should.deep.equal({items: [
-        // //   {id: '00:5e+0', dictID: '00', str: '5', descr: '[number]',
+        // //   {id: '00:5e+0', dictID: '00', str: '5', descr: 'number',
         // //    type: 'N'} ]});
         res.items.length.should.equal(1);
         var m = res.items[0];  // We'll test properties of the only match-obj.
         m.id.endsWith('5e+0').should.equal(true);
         delete m.id;
         delete m.dictID;
-        m.should.deep.equal({str: '5', descr: '[number]', type: 'N'});
+        m.should.deep.equal({str: '5', descr: 'number', type: 'N'});
         count.should.equal(1);
         cb();
       });
@@ -1390,10 +1390,10 @@ describe('DictionaryLocal.js', function() {
       '`super.addExtraMatchesForString()`', function(cb) {
       dict.getMatchesForString('1e3', {}, (err, res) => {
         res.items.should.deep.equal([
-          {id: '00:1e+3', dictID: '00', str: '1e3', descr:'[number]', type:'N'}]);
+          {id: '00:1e+3', dictID: '00', str: '1e3', descr:'number', type:'N'}]);
         dict.getMatchesForString('1E3', {}, (err, res) => {
           res.items.should.deep.equal([
-            {id: '00:1e+3', dictID: '00', str: '1E3', descr:'[number]', type:'N'}]);
+            {id: '00:1e+3', dictID: '00', str: '1E3', descr:'number', type:'N'}]);
           cb();
         });
       });
@@ -1417,7 +1417,7 @@ describe('DictionaryLocal.js', function() {
       dict2.getMatchesForString('5', 0, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [
-          {id:'XX:5e+0', dictID:'XX', str:'5', descr:'[number]', type:'N'} ]});
+          {id:'XX:5e+0', dictID:'XX', str:'5', descr:'number', type:'N'} ]});
         count.should.equal(1);
         cb();
       });
@@ -1443,12 +1443,12 @@ describe('DictionaryLocal.js', function() {
         dict2.getMatchesForString('5', {idts: ['Z:01', 'Z:02']}, (err, res) => {
           expect(err).to.equal(null);
           res.should.deep.equal({items: [
-      {id:'XX:5e+0', dictID:'XX', str:'5',  descr:'[number]',         type:'N'},
-      {id:'',        dictID:'',   str:'5',  descr:'[referring term]', type:'R'},
-      {id:'Z:01',    dictID:'Z',  str:'5',  terms:[ {str: '5'} ],     type:'F'},
-      {id:'Z:02',    dictID:'Z',  str:'15', terms:[ {str: '15'} ],    type:'G'},
-      {id:'Z:03',    dictID:'Z',  str:'55', terms:[ {str: '55'} ],    type:'S'},
-      {id:'Z:04',    dictID:'Z',  str:'75', terms:[ {str: '75'} ],    type:'T'},
+      {id:'XX:5e+0', dictID:'XX', str:'5',  descr:'number',         type:'N'},
+      {id:'',        dictID:'',   str:'5',  descr:'referring term', type:'R'},
+      {id:'Z:01',    dictID:'Z',  str:'5',  terms:[ {str: '5'} ],   type:'F'},
+      {id:'Z:02',    dictID:'Z',  str:'15', terms:[ {str: '15'} ],  type:'G'},
+      {id:'Z:03',    dictID:'Z',  str:'55', terms:[ {str: '55'} ],  type:'S'},
+      {id:'Z:04',    dictID:'Z',  str:'75', terms:[ {str: '75'} ],  type:'T'},
           ]});
           count.should.equal(1);
           cb();
