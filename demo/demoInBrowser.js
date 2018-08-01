@@ -139,11 +139,12 @@ function matchToString(m) {
   if (m.descr)  arr.push('descr:\'<span style="color:#772">' + m.descr + n);
   if (m.z    )  arr.push('z:\'<span style="color:#db8">' +
     JSON.stringify(m.z) + n);
-  if (m.terms)  arr.push('terms:\'<span style="color:#bbb">' +
+  if (m.terms)  arr.push('terms:<span style="color:#bbb">' +
     JSON.stringify(m.terms)
       .replace(/"str"/g, 'str')
       .replace(/"style"/g, 'style')
-      .replace(/"descr"/g, 'descr') + n);
+      .replace(/"descr"/g, 'descr') +
+    n);
 
-  return '{' + arr.join('\', ') + '\'}';
+  return '{' + arr.join('\', ') + '}';
 }

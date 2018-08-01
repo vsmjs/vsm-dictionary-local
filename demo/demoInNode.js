@@ -92,7 +92,7 @@ function matchToString(m) {
   if (m.style)  arr.push('style:\'' + m.style);
   if (m.descr)  arr.push('descr:\'' + m.descr);
   if (m.z)  arr.push('z:\'' + JSON.stringify(m.z));
-  if (m.terms)  arr.push('terms:\'' + JSON.stringify(m.terms)
+  if (m.terms)  arr.push('terms:' + JSON.stringify(m.terms)
     .replace(/"str"/g, 'str') .replace(/"style"/g, 'style')
     .replace(/"descr"/g, 'descr'));
 
