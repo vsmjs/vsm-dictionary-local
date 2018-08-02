@@ -30,7 +30,7 @@ function runDemo() {
 
 function demo1() {
   console.log('\n--- VsmDictionaryLocal entries sample:');
-  dict.getEntries({ filter: { dictID: 'BIO' }, perPage: 5 },  function(err, res) {
+  dict.getEntries({ filter: { dictID: ['BIO'] }, perPage: 5 },  function(err, res) {
     console.dir(res.items, {depth: 4});
     console.log(dict.entries.length + ' entries total.');
     demo2();
@@ -57,7 +57,7 @@ function demo3() {
   console.log('\n--- VsmDictionaryLocal match-objects for \'' + str + '\', ' +
     'with dictID-filter for \'' + dictID + '\':');
 
-  var options = { perPage: 10,  filter: {dictID: dictID} };
+  var options = { perPage: 10,  filter: {dictID: [dictID]} };
   dict.getMatchesForString(str, options, function (err, res) {
     showOutput(err, res, done);
   });

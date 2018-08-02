@@ -106,7 +106,7 @@ function createDemoPanel(opt) {
   function searchOptionsFunc() {
     var ans = { perPage: matchesMaxCount };
     if (dictInput) {
-      ans.filter = { dictID: dictInput.value };  // Always uses latest value.
+      ans.filter = { dictID: [dictInput.value] };  // Always uses latest value.
     }
     return ans;
   }

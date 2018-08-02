@@ -1,4 +1,4 @@
-module.exports = {undef, deepClone, strcmp, asArray, limitBetween, arrayQuery};
+module.exports = {undef, deepClone, strcmp, limitBetween, arrayQuery};
 
 
 function undef(x) {
@@ -24,16 +24,6 @@ function strcmp(a, b, caseMatters = false) {
     b = b.toLowerCase();
   }
   return a < b ?  -1 :  a > b ?  1 :  0;
-}
-
-
-/**
- * If given an array, returns it;
- * if given a single value, returns it wrapped into a one-element array;
- * if given `undefined`, returns an empty array.
- */
-function asArray(x) {
-  return undef(x) ? [] : [].concat(x);
 }
 
 

@@ -18,8 +18,8 @@ of the 'VsmDictionary' parent-class/interface (from the package
   package defines a standardized interface,
   for VSM-related tools to communicate with services
   that provide terms+IDs (e.g. a webserver API).
-- It also includes the small 'VsmDictionary' parent class (/interface) that
-  provides shared functionality for concrete subclasses (like this package).
+- That packages also includes the 'VsmDictionary' parent class that provides
+  some shared functionality for concrete subclasses (like this package).
 
 <br>
 
@@ -39,7 +39,7 @@ This is VsmDictionaryLocal:
 
 ## When to use VsmDictionaryLocal
 
-Because of the above,
+Because of the above:
 
 - During the development of new tools that depend on a VsmDictionary,
   this module can be used as a fully functional placeholder
@@ -82,15 +82,15 @@ Example that (only):
 const VsmDictionaryLocal = require('vsm-dictionary-local');
 
 var dict = new VsmDictionaryLocal();
-var dictInfo = { id: 'DictID_12', name: 'Example subdictionary' };
+var dictInfos = [ { id: 'DictID_12', name: 'Example subdictionary' } ];
 var entries = [
-  { id: 'URI:001', dictID: 'DictID_12', terms: ['aaa', 'synonym'] },
-  { id: 'URI:002', dictID: 'DictID_12', terms: 'aab' },
-  { id: 'URI:003', dictID: 'DictID_12', terms: 'abc', descr: 'description' }
+  { id: 'URI:001', dictID: 'DictID_12', terms: [{str: 'aaa'}, {str: 'synonym'}] },
+  { id: 'URI:002', dictID: 'DictID_12', terms: [{str: 'aab'}] },
+  { id: 'URI:003', dictID: 'DictID_12', terms: [{str: 'abc'}], descr: 'description' }
 ];
 
-dict.addDictInfos(dictInfo, (err) => {  // Add 1 subdictionary-info object.
-  dict.addEntries(entries, (err) => {   // Add 3 entries.
+dict.addDictInfos(dictInfos, (err) => {  // Add 1 subdictionary-info object.
+  dict.addEntries(entries, (err) => {    // Add 3 entries.
     dict.getMatchesForString('ab', {}, (err, res) => {  // Query for string 'ab'.
       console.dir(res.items, { depth: 3 });
     });
@@ -127,9 +127,9 @@ var dict = new VsmDictionaryLocal({
     { id: 'DictID_12',
       name: 'Example subdictionary',
       entries: [
-        { id: 'URI:001', terms: ['aaa', 'synonym'] },
-        { id: 'URI:002', terms: 'aab' },
-        { id: 'URI:003', terms: 'abc', descr: 'description' }
+        { id: 'URI:001', terms: [{str: 'aaa'}, {str: 'synonym'}] },
+        { id: 'URI:002', terms: [{str: 'aab'}] },
+        { id: 'URI:003', terms: [{str: 'abc'}], descr: 'description' }
       ]
     },
   ],

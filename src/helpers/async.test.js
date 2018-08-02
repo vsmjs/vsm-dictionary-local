@@ -1,4 +1,4 @@
-const {asyncMap, callAsync, callAsyncForOneOrEach} = require('./async');
+const {asyncMap, callAsync, callAsyncEach} = require('./async');
 const sinon = require('sinon');
 const chai = require('chai');  chai.should();
 const expect = chai.expect;
@@ -104,7 +104,7 @@ describe('helpers/async.js', function() {
   });
 
 
-  describe('callAsyncForOneOrEach()', function() {
+  describe('callAsyncEach()', function() {
     var f = (x, cb) => x==0 ? cb('e') : cb(null, x * 10);
     var delay = 0;
     var count;
@@ -113,27 +113,27 @@ describe('helpers/async.js', function() {
       count = 0;
     });
 
-    it('calls `f` on a single value, without error; ' +
+    it('calls `f` on a single value in an array, without error; ' +
       'and calls back on the next event-loop', function(cb) {
-      callAsyncForOneOrEach(1, f, delay, (err, res) => {
+      callAsyncEach([1], f, delay, (err, res) => {
         expect(err).to.equal(null);
-        res.should.equal(10);
+        res.should.deep.equal([10]);
         count.should.equal(1);
         cb();
       });
       count = 1;
     });
-    it('on single value, and reports error', function(cb) {
-      callAsyncForOneOrEach(0, f, delay, (err, res) => {
-        err.should.equal('e');
-        expect(res).to.equal(undefined);
+    it('on single value in an array, and reports error', function(cb) {
+      callAsyncEach([0], f, delay, (err, res) => {
+        err.should.deep.equal(['e']);
+        expect(res).to.deep.equal([undefined]);
         count.should.equal(1);  // Test each call's true asynchronicity as well.
         cb();
       });
       count = 1;
     });
     it('on multiple values in array, without errors', function(cb) {
-      callAsyncForOneOrEach([1, 2], f, delay, (err, res) => {
+      callAsyncEach([1, 2], f, delay, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([10, 20]);
         count.should.equal(1);
@@ -142,7 +142,7 @@ describe('helpers/async.js', function() {
       count = 1;
     });
     it('on multiple values in array, including an error', function(cb) {
-      callAsyncForOneOrEach([0, 1, 2], f, delay, (err, res) => {
+      callAsyncEach([0, 1, 2], f, delay, (err, res) => {
         err.should.deep.equal(['e', null, null]);
         res.should.deep.equal([undefined, 10, 20]);
         count.should.equal(1);
@@ -152,7 +152,7 @@ describe('helpers/async.js', function() {
     });
     it('calls the callback on the next event-loop, also for an empty array',
       function(cb) {
-      callAsyncForOneOrEach([], f, delay, (err, res) => {
+      callAsyncEach([], f, delay, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([]);
         count.should.equal(1);

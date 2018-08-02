@@ -2,17 +2,14 @@
 Design specification: see DictionaryLocal.spec.md.
 */
 const Dictionary = require('vsm-dictionary');
-const callAsync   = require('./helpers/async').callAsync;
-const callAsyncOE = require('./helpers/async').callAsyncForOneOrEach;
-const {deepClone, strcmp, asArray, arrayQuery} = require('./helpers/util');
-const prepGetOptions = Dictionary.prepGetOptions;
-const zPropPrune     = Dictionary.zPropPrune;
+const callAsync     = require('./helpers/async').callAsync;
+const callAsyncEach = require('./helpers/async').callAsyncEach;
+const {deepClone, strcmp, arrayQuery} = require('./helpers/util');
 
 const msgAbsentDictInfo = s => `dictInfo for '${s}' does not exist`;
 const msgAbsentEntry    = s =>    `entry for '${s}' does not exist`;
 const msgAbsentRefTerm  = s =>      `refTerm '${s}' does not exist`;
 const msgNoSuchDictID   = s => `entry is linked to non-existent dictID '${s}'`;
-const f_id_numLength = 4;
 const perPageDefault = 20;
 const perPageMax     = 100;
 
@@ -42,41 +39,41 @@ module.exports = class DictionaryLocal extends Dictionary {
   // --- ADD/UPDATE/DELETE ONE OR MORE DICTINFOS/ENTRIES/REFTERMS ---
 
   addDictInfos(dictInfos, cb) {
-    callAsyncOE(dictInfos, this._addDictInfo.bind(this), this.delay,
-                this._cbDict(cb));
+    callAsyncEach(dictInfos, this._addDictInfo.bind(this), this.delay,
+      this._cbDict(cb));
   }
 
   updateDictInfos(dictInfos, cb) {
-    callAsyncOE(dictInfos, this._updateDictInfo.bind(this), this.delay,
-                this._cbDict(cb));
+    callAsyncEach(dictInfos, this._updateDictInfo.bind(this), this.delay,
+      this._cbDict(cb));
   }
 
   deleteDictInfos(dictIDs, cb) {
-    callAsyncOE(dictIDs, this._deleteDictInfo.bind(this), this.delay, cb);
+    callAsyncEach(dictIDs, this._deleteDictInfo.bind(this), this.delay, cb);
   }
 
 
   addEntries(entries, cb) {
-    callAsyncOE(entries, this._addEntry.bind(this), this.delay,
-                this._cbEntr(cb));
+    callAsyncEach(entries, this._addEntry.bind(this), this.delay,
+      this._cbEntr(cb));
   }
 
   updateEntries(entryLikes, cb) {
-    callAsyncOE(entryLikes, this._updateEntry.bind(this), this.delay,
-                this._cbEntr(cb));
+    callAsyncEach(entryLikes, this._updateEntry.bind(this), this.delay,
+      this._cbEntr(cb));
   }
 
   deleteEntries(conceptIDs, cb) {
-    callAsyncOE(conceptIDs, this._deleteEntry.bind(this), this.delay, cb);
+    callAsyncEach(conceptIDs, this._deleteEntry.bind(this), this.delay, cb);
   }
 
 
   addRefTerms(refTerms, cb) {
-    callAsyncOE(refTerms, this._addRefTerm.bind(this), this.delay, cb);
+    callAsyncEach(refTerms, this._addRefTerm.bind(this), this.delay, cb);
   }
 
   deleteRefTerms(refTerms, cb) {
-    callAsyncOE(refTerms, this._deleteRefTerm.bind(this), this.delay, cb);
+    callAsyncEach(refTerms, this._deleteRefTerm.bind(this), this.delay, cb);
   }
 
 
@@ -150,7 +147,6 @@ module.exports = class DictionaryLocal extends Dictionary {
 
     // Assign optional functions; and also deserialize them if they are Strings.
     if (di.f_aci)  eval('dictInfo.f_aci = ' + di.f_aci);
-    if (di.f_id )  eval('dictInfo.f_id  = ' + di.f_id);
 
     this.dictInfos.push(dictInfo);
     return cb(null);  // Must use `return` here, for sync-calling compatibility.
@@ -203,14 +199,13 @@ module.exports = class DictionaryLocal extends Dictionary {
     var di = this.dictInfos[ this._indexOfDictInfo(entry.dictID) ];
     if (!di)  return cb(msgNoSuchDictID(entry.dictID));
 
-    entry.id = this._makeStringConceptID(di, entry);  // Convert any Int to Str.
-
     if (this._indexOfEntry(entry.id) >= 0) {
       return cb(`entry for '${entry.id}' already exists`);
     }
 
-    entry = Dictionary.canonicalizeEntry(entry);
+    entry = Dictionary.prepEntry(entry);
     if (entry.terms.filter(t => !t.str).length)  return cb('invalid term');
+    if (entry.z)  entry.z = deepClone(entry.z);
 
     this.entries.push(entry);
     return cb(null);
@@ -230,16 +225,17 @@ module.exports = class DictionaryLocal extends Dictionary {
     if (entryLike.descr )  entry.descr  = entryLike.descr;
 
     // Delete as needed any items from `terms`, and properties from `z`.
-    var termsDel = asArray(entryLike.termsDel);
-    entry.terms = entry.terms.filter(term => !termsDel.includes(term.str) );
+    if (entryLike.termsDel)  entry.terms = entry.terms.filter(
+      term => !entryLike.termsDel.includes(term.str)
+    );
 
-    if (entryLike.zDel === true)  delete entry.z;
-    else if (entry.z) {
-      asArray(entryLike.zDel) .forEach(key => delete entry.z[key]);
+    if (entryLike.zDel && entry.z) {
+      if (entryLike.zDel === true)  delete entry.z;
+      else  entryLike.zDel.forEach(key => delete entry.z[key]);
     }
 
     // Replace(-if-exists) or add, termObjects in `terms`.
-    var terms = Dictionary.canonicalizeTerms( entryLike.terms || [] );
+    var terms = Dictionary.prepTerms( entryLike.terms || [] );
     terms.forEach(t => {
       var j = entry.terms.findIndex(t2 => t2.str == t.str);
       if (j >= 0)  entry.terms[j] = t;
@@ -261,17 +257,6 @@ module.exports = class DictionaryLocal extends Dictionary {
     if (index < 0)  return cb(msgAbsentEntry(id));
     this.entries.splice(index, 1);
     cb(null);
-  }
-
-
-  _makeStringConceptID(dictInfo, entry) {
-    return typeof(entry.id) != 'number' ?  entry.id :
-      (dictInfo.f_id || this._default_f_id) (dictInfo, entry);
-  }
-
-
-  _default_f_id(dictInfo, entry) {
-    return dictInfo.id + ':' + entry.id.toString().padStart(f_id_numLength, '0');
   }
 
 
@@ -308,10 +293,10 @@ module.exports = class DictionaryLocal extends Dictionary {
   // --- "GET" FOR DICTINFOS/ENTRIES/REFTERMS ---
 
   getDictInfos(options, cb) {
-    var o = prepGetOptions(options, ['id', 'name']);
+    var o = Object.assign({ filter: {} }, options);
 
     var filter = di =>
-      (!o.filter.id   || o.filter.id  .includes(di.id)) &&
+      (!o.filter.id   || o.filter.id  .includes(di.id  )) &&
       (!o.filter.name || o.filter.name.includes(di.name));
 
     var sort = o.sort == 'name' ?
@@ -324,7 +309,7 @@ module.exports = class DictionaryLocal extends Dictionary {
 
 
   getEntries(options, cb) {
-    var o = prepGetOptions(options, ['id', 'dictID']);
+    var o = Object.assign({ filter: {} }, options);
 
     var filter = e =>
       (!o.filter.id     || o.filter.id    .includes(e.id    )) &&
@@ -344,7 +329,8 @@ module.exports = class DictionaryLocal extends Dictionary {
 
 
   getRefTerms(options, cb) {
-    var o = prepGetOptions(options, ['str']);
+    var o = Object.assign({ filter: {} }, options);
+
     var filter = s => !o.filter.str || o.filter.str.includes(s);
     var sort = (a, b) => strcmp(a, b);
 
@@ -363,7 +349,7 @@ module.exports = class DictionaryLocal extends Dictionary {
   // --- SEARCH BY STRING: "GET MATCHES" FOR ENTRIES ---
 
   getMatchesForString(searchStr, options, cb) {
-    var o = prepGetOptions(options, ['dictID'], ['dictID']);
+    var o = Object.assign({ filter: {}, sort: {} }, options);
 
     var arr = [];
     var str = searchStr.toLowerCase();

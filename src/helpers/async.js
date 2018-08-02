@@ -1,4 +1,4 @@
-module.exports = {asyncMap, callAsync, callAsyncForOneOrEach};
+module.exports = {asyncMap, callAsync, callAsyncEach};
 
 
 /**
@@ -64,23 +64,21 @@ function callAsync(f, delay, ...args) {
 
 
 /**
- * + If `elems` is a single value, then calls `func(value, cb)` on it.
- *   If `elems` is an array, then
- *   - calls `func(item, tmpCb)` for all items,
- *   - it collects both all errors, and the results that `func` returns via its
- *     calls to `tmpCb(error, result)`, into two arrays: `errors` and `results`;
+ * - For the given `elems` array:
+ *   - calls `func(item, tmpCb)` for each item,
+ *   - collects all what `func` returns via its calls to tmpCb(error, result)`,
+ *     into two arrays: `errors` and `results`;
  *   - and finally, calls `cb` with `(errors, results)`,
  *     after making `errors` simply `null` if all errors were `null`.
- * + Moreover, it makes this happen in a in a guaranteed truly asynchronous way:
- *   it calls `func` on the next event-loop, or if `func` is never called (when
+ * - Moreover, it makes this happen in a in a guaranteed truly asynchronous way:
+ *   it calls `func` on next event-loops, or if `func` is never called (when
  *   elems is an empty array), then calls `cb` on the next event-loop instead;
- *   and with a custom delay in milliseconds.
+ *   and with a custom delay in milliseconds (same delay value for all elems).
  */
-function callAsyncForOneOrEach(elems, func, delay, cb) {
+function callAsyncEach(elems, func, delay, cb) {
   delay = _getDelayNumber(delay);
 
-  if (!Array.isArray(elems))  makeAsync(func)(elems, cb);
-  else if (!elems.length)  makeAsync(cb)(null, []);
+  if (!elems.length)  makeAsync(cb)(null, []);  // If no elems, still call `cb`.
   else  asyncMap(elems, (e, cbf) => makeAsync(func)(e, cbf), cb);
 
   function makeAsync(cb) {
