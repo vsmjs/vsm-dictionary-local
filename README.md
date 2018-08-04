@@ -100,7 +100,7 @@ dict.addDictInfos(dictInfos, (err) => {  // Add 1 subdictionary-info object.
 
 This gives the output:
 
-```json
+```javascript
 [ { id: 'URI:003',         // Concept-ID.
     dictID: 'DictID_12',   // Dictionary-ID.
     descr: 'description',  // Description of the meaning of concept `URI:003`.
