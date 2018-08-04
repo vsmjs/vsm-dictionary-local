@@ -1,28 +1,21 @@
-const {asyncMap, callAsync, callAsyncEach} = require('./async');
+const {callAsync, callAsyncFor, _getDelayNumber} = require('./async');
 const sinon = require('sinon');
 const chai = require('chai');  chai.should();
 const expect = chai.expect;
 
 
 describe('helpers/async.js', function() {
-  describe('asyncMap()', function() {
-    var f = (x, cb) => x == 0 ? cb('err') : cb(null, x * 10); // Error for x==0.
-
-    it('calls back with two arrays: null/error-values, and results-values, ' +
-      'as received back from each of the function calls', function(cb) {
-      asyncMap([0, 1, 2], f, (err, res) => {
-        err.should.deep.equal(['err', null, null]);
-        res.should.deep.equal([undefined, 10, 20]);
-        cb();
-      });
+  describe('_getDelayNumber()', function() {
+    it('for a single value, returns that value', function() {
+      _getDelayNumber(100).should.equal(100);
     });
-    it('calls back with one `null` as \'err\' ' +
-      'if none of the calls reported an error', function(cb) {
-      asyncMap([1, 2], f, (err, res) => {
-        expect(err).to.deep.equal(null);
-        res.should.deep.equal([10, 20]);
-        cb();
-      });
+    it('for an array, returns a number within the given bounds', function() {
+      var nr = _getDelayNumber([100, 200]);
+      (nr >= 100).should.equal(true);
+      (nr <= 200).should.equal(true);
+    });
+    it('for an array, corrects invalid bounds', function() {
+      _getDelayNumber([200, 100]).should.equal(200);
     });
   });
 
@@ -104,8 +97,8 @@ describe('helpers/async.js', function() {
   });
 
 
-  describe('callAsyncEach()', function() {
-    var f = (x, cb) => x==0 ? cb('e') : cb(null, x * 10);
+  describe('callAsyncFor()', function() {
+    var f = (x) => x==0 ? ['e', undefined] : [null, x * 10];
     var delay = 0;
     var count;
 
@@ -113,27 +106,9 @@ describe('helpers/async.js', function() {
       count = 0;
     });
 
-    it('calls `f` on a single value in an array, without error; ' +
+    it('calls `f` on an array, without error; ' +
       'and calls back on the next event-loop', function(cb) {
-      callAsyncEach([1], f, delay, (err, res) => {
-        expect(err).to.equal(null);
-        res.should.deep.equal([10]);
-        count.should.equal(1);
-        cb();
-      });
-      count = 1;
-    });
-    it('on single value in an array, and reports error', function(cb) {
-      callAsyncEach([0], f, delay, (err, res) => {
-        err.should.deep.equal(['e']);
-        expect(res).to.deep.equal([undefined]);
-        count.should.equal(1);  // Test each call's true asynchronicity as well.
-        cb();
-      });
-      count = 1;
-    });
-    it('on multiple values in array, without errors', function(cb) {
-      callAsyncEach([1, 2], f, delay, (err, res) => {
+      callAsyncFor([1, 2], f, delay, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([10, 20]);
         count.should.equal(1);
@@ -141,8 +116,9 @@ describe('helpers/async.js', function() {
       });
       count = 1;
     });
-    it('on multiple values in array, including an error', function(cb) {
-      callAsyncEach([0, 1, 2], f, delay, (err, res) => {
+    it('calls `f` on an array, including an error; ' +
+      'and calls back on the next event-loop', function(cb) {
+      callAsyncFor([0, 1, 2], f, delay, (err, res) => {
         err.should.deep.equal(['e', null, null]);
         res.should.deep.equal([undefined, 10, 20]);
         count.should.equal(1);
@@ -150,9 +126,9 @@ describe('helpers/async.js', function() {
       });
       count = 1;
     });
-    it('calls the callback on the next event-loop, also for an empty array',
-      function(cb) {
-      callAsyncEach([], f, delay, (err, res) => {
+    it('also for an empty array, ' +
+      'calls the callback on the next event-loop', function(cb) {
+      callAsyncFor([], f, delay, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([]);
         count.should.equal(1);

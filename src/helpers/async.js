@@ -1,40 +1,4 @@
-module.exports = {asyncMap, callAsync, callAsyncEach};
-
-
-/**
- * The function `asyncMap(elems, func, cb)` executes, in parallel, a call
- * to `func(item, callback(error, result))` for every item of the `elems` array,
- * and calls `cb(errors, results)` when all of their callbacks have been called.
- *
- * In contrast to npm's "async"'s `map` function, this function does not stop
- * if any of the `func`-calls reports an error (via its callback). It returns
- * an array of null/error for each of the calls, or simply `null` if no errors.
- *
- * - `results` is an array of the `results` returned via each `callback`;
- * - `errors`:
- *   - if any of the `callback`s returned a non-null `error`,
- *     then `errors` is an array of all the reported `error` values,
- *     in the order corresponding to the given `elems`.
- *   - if all of them were `null`, then `errors` is simply `null` (not array).
- */
-function asyncMap(elems, func, cb) {
-  var results = [];
-  var errors = [];
-  var count = elems.length;
-
-  if (!count)  return cb(null, results);
-
-  elems.forEach((e, i) =>
-    func(e, (error, result) => {
-      errors[i] = error;
-      results[i] = result;
-      if (!--count)  cb(
-        errors.every(err => err === null) ? null : errors,
-        results
-      );
-    })
-  );
-}
+module.exports = {callAsync, callAsyncFor, _getDelayNumber};
 
 
 /**
@@ -52,7 +16,6 @@ function _getDelayNumber(delay) {
 }
 
 
-
 /**
  * Makes a call to `f` with given arguments, in a truly asynchronous way,
  * i.e. on the next event-loop; and with a custom delay in milliseconds.
@@ -64,24 +27,29 @@ function callAsync(f, delay, ...args) {
 
 
 /**
- * - For the given `elems` array:
- *   - calls `func(item, tmpCb)` for each item,
- *   - collects all what `func` returns via its calls to tmpCb(error, result)`,
- *     into two arrays: `errors` and `results`;
- *   - and finally, calls `cb` with `(errors, results)`,
- *     after making `errors` simply `null` if all errors were `null`.
- * - Moreover, it makes this happen in a in a guaranteed truly asynchronous way:
- *   it calls `func` on next event-loops, or if `func` is never called (when
- *   elems is an empty array), then calls `cb` on the next event-loop instead;
- *   and with a custom delay in milliseconds (same delay value for all elems).
+ * - Waits for a custom `delay` in milliseconds, or at least until the next
+ *   event-loop starts, before starting to process; this makes the final call
+ *   to `cb` happen in a guaranteed truly asynchronous way;
+ * - then calls the *synchronous* function `func(item)` for each item in the
+ *   given `elems` array;
+ * - hereby collects what each call returns (as a 1-or-2-element array
+ *   `[error, result]`), into two arrays: `errors` and `results`;
+ * - then makes `errors` simply `null` if all errors were `null`;
+ * - and finally, calls `cb` with arguments `(errors, results)`,
  */
-function callAsyncEach(elems, func, delay, cb) {
-  delay = _getDelayNumber(delay);
+function callAsyncFor(elems, func, delay, cb) {
+  var errors  = [];
+  var results = [];
 
-  if (!elems.length)  makeAsync(cb)(null, []);  // If no elems, still call `cb`.
-  else  asyncMap(elems, (e, cbf) => makeAsync(func)(e, cbf), cb);
-
-  function makeAsync(cb) {
-    return (...args) => callAsync(cb, delay, ...args);
-  }
+  callAsync(
+    () => {
+      elems.forEach(e => {
+        var arr = func(e);
+        errors .push(arr[0]);
+        results.push(arr[1]);
+      });
+      cb(errors.every(err => err === null) ? null : errors,  results);
+    },
+    delay
+  );
 }
