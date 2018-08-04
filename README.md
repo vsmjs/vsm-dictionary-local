@@ -66,7 +66,7 @@ in the spec &amp; source code).</span>
 ## Installation with NPM for Node.js:
 
 ```
-npm install vsm-dictionary-local --save
+npm install vsm-dictionary-local
 ```
 
 <br>
