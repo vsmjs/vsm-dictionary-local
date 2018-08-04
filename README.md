@@ -78,7 +78,7 @@ Example that (only):
 &nbsp;&bull; adds entries (=concepts/IDs + terms),  
 &nbsp;&bull; string-searches for matching terms:
 
-```
+```javascript
 const VsmDictionaryLocal = require('vsm-dictionary-local');
 
 var dict = new VsmDictionaryLocal();
@@ -100,7 +100,7 @@ dict.addDictInfos(dictInfos, (err) => {  // Add 1 subdictionary-info object.
 
 This gives the output:
 
-```
+```json
 [ { id: 'URI:003',         // Concept-ID.
     dictID: 'DictID_12',   // Dictionary-ID.
     descr: 'description',  // Description of the meaning of concept `URI:003`.
@@ -118,7 +118,7 @@ This gives the output:
 Or we can load all data in one synchronous call, by giving it to
 VsmDictionaryLocal's constructor:
 
-```
+```javascript
 const VsmDictionaryLocal = require('vsm-dictionary-local');
 
 // Create.
