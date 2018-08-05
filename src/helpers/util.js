@@ -1,4 +1,5 @@
-module.exports = {undef, deepClone, strcmp, limitBetween, arrayQuery};
+module.exports =
+  {undef, deepClone, strcmp, limitBetween, randomFromInterval, arrayQuery};
 
 
 function undef(x) {
@@ -33,6 +34,20 @@ function strcmp(a, b, caseMatters = false) {
  */
 function limitBetween(x, min, max) {
   return (min != null && x < min) ? min : (max != null && x > max) ? max : x;
+}
+
+
+/**
+ * If given an Array of two numbers, returns a random value in that range;
+ * if given a positive number, returns it;
+ */
+function randomFromInterval(delay) {
+  if(Array.isArray(delay)  &&  delay.length >= 2) {
+    var min = Math.max(+delay[0], 0);
+    var max = Math.max(+delay[1], min);
+    return min + (Math.random() * (max - min))
+  }
+  else  return Math.max(+delay, 0);
 }
 
 

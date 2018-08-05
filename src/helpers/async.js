@@ -1,19 +1,6 @@
-module.exports = {callAsync, callAsyncFor, _getDelayNumber};
+module.exports = {callAsync, callAsyncFor};
 
-
-/**
- * If given a range (array) of two numbers, a random value in that range;
- * if given a positive number, returns it;
- * else returns 0.
- */
-function _getDelayNumber(delay) {
-  if(Array.isArray(delay)  &&  delay.length >= 2) {
-    var min = Math.max(+delay[0], 0);
-    var max = Math.max(+delay[1], min);
-    return min + (Math.random() * (max - min))
-  }
-  else  return Math.max(+delay, 0);
-}
+const { randomFromInterval } = require('./util');
 
 
 /**
@@ -21,7 +8,7 @@ function _getDelayNumber(delay) {
  * i.e. on the next event-loop; and with a custom delay in milliseconds.
  */
 function callAsync(f, delay, ...args) {
-  delay = _getDelayNumber(delay);
+  delay = randomFromInterval(delay);
   setTimeout(() => f(...args), delay);
 }
 

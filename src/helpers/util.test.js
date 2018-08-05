@@ -1,4 +1,5 @@
-const {undef, deepClone, strcmp, limitBetween, arrayQuery} = require('./util');
+const {undef, deepClone, strcmp, limitBetween, randomFromInterval, arrayQuery}
+  = require('./util');
 const chai = require('chai');  chai.should();
 const expect = chai.expect;
 
@@ -63,6 +64,20 @@ describe('helpers/util.js', function() {
       'if the 2nd is `null`', function() {
       limitBetween(0, null, 3).should.equal(0);
       limitBetween(4, null, 3).should.equal(3);
+    });
+  });
+
+  describe('randomFromInterval()', function() {
+    it('for a single value, returns that value', function() {
+      randomFromInterval(100).should.equal(100);
+    });
+    it('for an array, returns a number within the given bounds', function() {
+      var nr = randomFromInterval([100, 200]);
+      (nr >= 100).should.equal(true);
+      (nr <= 200).should.equal(true);
+    });
+    it('for an array, corrects invalid bounds', function() {
+      randomFromInterval([200, 100]).should.equal(200);
     });
   });
 

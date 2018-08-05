@@ -1,25 +1,10 @@
-const {callAsync, callAsyncFor, _getDelayNumber} = require('./async');
+const {callAsync, callAsyncFor} = require('./async');
 const sinon = require('sinon');
 const chai = require('chai');  chai.should();
 const expect = chai.expect;
 
 
 describe('helpers/async.js', function() {
-  describe('_getDelayNumber()', function() {
-    it('for a single value, returns that value', function() {
-      _getDelayNumber(100).should.equal(100);
-    });
-    it('for an array, returns a number within the given bounds', function() {
-      var nr = _getDelayNumber([100, 200]);
-      (nr >= 100).should.equal(true);
-      (nr <= 200).should.equal(true);
-    });
-    it('for an array, corrects invalid bounds', function() {
-      _getDelayNumber([200, 100]).should.equal(200);
-    });
-  });
-
-
   describe('callAsync()', function() {
     var f = (a, b, cb) => cb(null, a * b);
     var count;
