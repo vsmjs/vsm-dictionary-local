@@ -1,5 +1,5 @@
 module.exports =
-  {undef, deepClone, strcmp, limitBetween, randomFromInterval, arrayQuery};
+  { undef, deepClone, strcmp, limitBetween, randomFromInterval, arrayQuery };
 
 
 function undef(x) {

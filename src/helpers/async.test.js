@@ -1,4 +1,4 @@
-const {callAsync, callAsyncFor} = require('./async');
+const { callAsync, callAsyncFor } = require('./async');
 const sinon = require('sinon');
 const chai = require('chai');  chai.should();
 const expect = chai.expect;

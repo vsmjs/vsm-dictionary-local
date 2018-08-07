@@ -4,7 +4,7 @@ Design specification: see DictionaryLocal.spec.md.
 const Dictionary = require('vsm-dictionary');
 const callAsync    = require('./helpers/async').callAsync;
 const callAsyncFor = require('./helpers/async').callAsyncFor;
-const {deepClone, strcmp, arrayQuery} = require('./helpers/util');
+const { deepClone, strcmp, arrayQuery } = require('./helpers/util');
 
 const msgAbsentDictInfo = s => `dictInfo for '${s}' does not exist`;
 const msgAbsentEntry    = s =>    `entry for '${s}' does not exist`;

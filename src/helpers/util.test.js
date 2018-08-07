@@ -1,4 +1,4 @@
-const {undef, deepClone, strcmp, limitBetween, randomFromInterval, arrayQuery}
+const { undef, deepClone, strcmp, limitBetween, randomFromInterval, arrayQuery }
   = require('./util');
 const chai = require('chai');  chai.should();
 const expect = chai.expect;

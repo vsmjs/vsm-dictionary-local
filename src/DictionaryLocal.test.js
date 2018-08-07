@@ -1,5 +1,5 @@
 const DictionaryLocal = require('./DictionaryLocal');
-const {deepClone} = require('./helpers/util');
+const { deepClone } = require('./helpers/util');
 const sinon = require('sinon');
 const chai = require('chai');  chai.should();
 const expect = chai.expect;

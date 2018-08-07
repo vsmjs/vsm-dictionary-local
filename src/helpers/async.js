@@ -1,4 +1,4 @@
-module.exports = {callAsync, callAsyncFor};
+module.exports = { callAsync, callAsyncFor };
 
 const { randomFromInterval } = require('./util');
 
