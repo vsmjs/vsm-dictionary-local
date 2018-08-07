@@ -42,7 +42,7 @@ function limitBetween(x, min, max) {
  * if given a positive number, returns it;
  */
 function randomFromInterval(delay) {
-  if(Array.isArray(delay)  &&  delay.length >= 2) {
+  if (Array.isArray(delay)  &&  delay.length >= 2) {
     var min = Math.max(+delay[0], 0);
     var max = Math.max(+delay[1], min);
     return min + (Math.random() * (max - min))

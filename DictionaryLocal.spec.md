@@ -21,9 +21,9 @@ provides some additional functionality.
 Notes:
 + Callbacks are called in a truly asynchronous way (via `setTimeout(, 0)`,
   i.e. on the next event-loop) in order to show consistent,
-  guaranteed-ansynchronous behavior.  
-  This makes this local Dictionary implementation behave in the exact same way
-  as one that would interface with a remote server.
+  guaranteed-asynchronous behavior.  
+  This makes this local VsmDictionary implementation behave in the exact same
+  way as one that would interface with a remote server.
 + For basic data types and Get/Add/Update/Delete functionality:
   see the parent class `Dictionary`, where these concepts and functions are
   explained in detail.  
@@ -66,11 +66,11 @@ ADDITIONAL 'ADD'-FUNCTIONALITY
             but:  
         + the  `dictID` property of these entries may be left away: then
           the dict-`id` from the surrounding `dictInfo`-like object is used;
-  - `refTerms`: {Array(String)}:  
+  - `refTerms`: {Array(String)} (optional):  
             is a list of refTerms.<br><br>
   + All `dictData` will be processed internally and stored as standard 'dictInfo'
     and 'entry' objects, as they are described in the parent class `Dictionary`.
-  + Any object (any dictInfo and entry), is first attempted to be added;
+  + Any object (dictInfo or entry), is first attempted to be added;
     and if that gave an error, then the update function is tried for it instead.
   + Returns an array of collected errors (so, only the not-null ones),
     or simply `null` if there were none (so if that array would be empty).

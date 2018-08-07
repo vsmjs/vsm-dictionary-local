@@ -958,6 +958,16 @@ describe('DictionaryLocal.js', function() {
         cb();
       });
     });
+    it('does not return anything for the empty string', function(cb) {
+      var count = 0;
+      dict.getRefTerms({ filter: { str: [''] } }, (err, res) => {
+        expect(err).to.equal(null);
+        res.should.deep.equal({ items: [] });
+        count.should.equal(1);
+        cb();
+      });
+      count = 1;
+    });
   });
 
 
