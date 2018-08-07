@@ -345,7 +345,7 @@ module.exports = class DictionaryLocal extends Dictionary {
 
   // --- SEARCH BY STRING: "GET MATCHES" FOR ENTRIES ---
 
-  getMatchesForString(searchStr, options, cb) {
+  getEntryMatchesForString(searchStr, options, cb) {
     var o = Object.assign({ filter: {}, sort: {} }, options);
 
     var arr = [];
@@ -389,13 +389,11 @@ module.exports = class DictionaryLocal extends Dictionary {
       arr = Dictionary.zPropPrune(arr, o.z);
     }
 
-    // Possibly add an exactly-matching refTerm, to the front of `arr`.
-    var refTerm = this.refTerms.find(s => s.toLowerCase() == str);
-    if (refTerm)  arr.unshift(this.refTermToMatch(refTerm)); // Parent-cls func.
-
-    super.addExtraMatchesForString(searchStr, arr, o, (err, res) => {
-      callAsync(cb, this.delay, null, { items: err ? arr : res });
-    });
+    // Call back without delay here, as the main function `getMatchesForString()`
+    // (in the parent class) calls both this function and `getRefTerms()`, which
+    // already waits `this.delay`. So this avoids having a double the delay
+    // for the function that will _actually_ be used by dependent modules.
+    callAsync(cb, 0, null, { items: arr });
   }
 
 }

@@ -1537,6 +1537,8 @@ describe('DictionaryLocal.js', function() {
       dict.getEntries     ({}, inc);
       dict.getRefTerms    ({}, inc);
       dict.getMatchesForString('', {}, inc);
+      ///// Note: we don't test this one, see comment inside that function:
+      ///dict.getEntryMatchesForString('', {}, inc);
       clock.tick(99);
       count.should.equal(0);  // `inc` was not yet called by any function.
       clock.tick(1);

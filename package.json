@@ -1,6 +1,6 @@
 {
   "name": "vsm-dictionary-local",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "description": "Local (in-memory), full implementation of a VSM-dictionary",
   "main": "src/DictionaryLocal.js",
   "scripts": {
@@ -40,6 +40,6 @@
     "webpack-dev-server": "^2.11.1"
   },
   "dependencies": {
-    "vsm-dictionary": "^2.1.0"
+    "vsm-dictionary": "^2.2.0"
   }
 }
