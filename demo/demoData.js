@@ -254,7 +254,7 @@ function createData() {
     ],
 
     refTerms: [
-      'it', 'this', 'that', 'they', 'these'
+      'it', 'this', 'that', 'they', 'these', 'them'
     ]
   };
 }
