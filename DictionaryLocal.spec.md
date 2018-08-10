@@ -50,6 +50,9 @@ The constructor takes an `options` Object with additional, optional properties:
     + If it is an array of two numbers, a minimum and a maximum value,
       then the delay will be a new random value in that range,
       for every async call-back.
+    + Note: `getMatchesForString()` uses twice this delay, because it depends
+      on `getEntryMatchesForString()` and `getRefTerms()` that each access data
+      and apply their own delay, consecutively.
 
 
 &nbsp;  
