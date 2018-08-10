@@ -1536,20 +1536,27 @@ describe('DictionaryLocal.js', function() {
       dict.getDictInfos   ({}, inc);
       dict.getEntries     ({}, inc);
       dict.getRefTerms    ({}, inc);
+      dict.getEntryMatchesForString('', {}, inc);
+
+      // Note: `getMatchesForString()` depends on two functions that do the
+      //       real data-access for it: `getEntryMat..()` and `getRefTerms()`.
+      //       Therefore it will have double the delay.
       dict.getMatchesForString('', {}, inc);
-      ///// Note: we don't test this one, see comment inside that function:
-      ///dict.getEntryMatchesForString('', {}, inc);
+
       clock.tick(99);
       count.should.equal(0);  // `inc` was not yet called by any function.
       clock.tick(1);
       count.should.equal(12); // `inc` has been called back by all functions now.
+
+      clock.tick(100);        // Now, 200ms have passed since the start.
+      count.should.equal(13); // Also `getMatchesForString()` called back now.
       cb();
     });
 
     it('calls a callback on the next event loop with no delay, ' +
       'if an invalid delay value was given', function(cb) {
       var dict = new DictionaryLocal({delay: -100});
-      dict.getMatchesForString('', {}, inc);  // We test with this function only.
+      dict.getDictInfos({}, inc);  // We test with this function only.
       clock.tick(1);
       count.should.equal(1);
       cb();
@@ -1557,7 +1564,7 @@ describe('DictionaryLocal.js', function() {
 
     it('calls a callback after a given delay value', function(cb) {
       var dict = new DictionaryLocal({delay: 200});
-      dict.getMatchesForString('', {}, inc);
+      dict.getDictInfos({}, inc);
       clock.tick(199);
       count.should.equal(0);
       clock.tick(1);
@@ -1567,7 +1574,7 @@ describe('DictionaryLocal.js', function() {
 
     it('calls a callback after a given delay range', function(cb) {
       var dict = new DictionaryLocal({delay: [300, 500]});
-      dict.getMatchesForString('', {}, inc);
+      dict.getDictInfos({}, inc);
       clock.tick(299);
       count.should.equal(0);
       clock.tick(201);
@@ -1578,7 +1585,7 @@ describe('DictionaryLocal.js', function() {
     it('-> setDelay() can set a new delay value', function(cb) {
       var dict = new DictionaryLocal({delay: 100});
       dict.setDelay(250);
-      dict.getMatchesForString('', {}, inc);
+      dict.getDictInfos({}, inc);
       clock.tick(249);
       count.should.equal(0);
       clock.tick(1);

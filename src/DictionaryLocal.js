@@ -389,11 +389,10 @@ module.exports = class DictionaryLocal extends Dictionary {
       arr = Dictionary.zPropPrune(arr, o.z);
     }
 
-    // Call back without delay here, as the main function `getMatchesForString()`
-    // (in the parent class) calls both this function and `getRefTerms()`, which
-    // already waits `this.delay`. So this avoids having a double the delay
-    // for the function that will _actually_ be used by dependent modules.
-    callAsync(cb, 0, null, { items: arr });
+    // (Note: the main function `getMatchesForString()` calls both this function
+    //   `getEntryMatchesForString()` and `getRefTerms()`, which both constitute
+    //   a query and thus both add a delay. So that function has double delay. )
+    callAsync(cb, this.delay, null, { items: arr });
   }
 
 }
