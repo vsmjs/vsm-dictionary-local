@@ -40,6 +40,6 @@
     "webpack-dev-server": "^2.11.1"
   },
   "dependencies": {
-    "vsm-dictionary": "^2.2.2"
+    "vsm-dictionary": "^2.3.0"
   }
 }
