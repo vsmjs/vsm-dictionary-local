@@ -389,9 +389,6 @@ module.exports = class DictionaryLocal extends Dictionary {
       arr = Dictionary.zPropPrune(arr, o.z);
     }
 
-    // (Note: the main function `getMatchesForString()` calls both this function
-    //   `getEntryMatchesForString()` and `getRefTerms()`, which both constitute
-    //   a query and thus both add a delay. So that function has double delay. )
     callAsync(cb, this.delay, null, { items: arr });
   }
 

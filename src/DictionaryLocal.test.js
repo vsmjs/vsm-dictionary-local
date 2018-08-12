@@ -1537,19 +1537,12 @@ describe('DictionaryLocal.js', function() {
       dict.getEntries     ({}, inc);
       dict.getRefTerms    ({}, inc);
       dict.getEntryMatchesForString('', {}, inc);
-
-      // Note: `getMatchesForString()` depends on two functions that do the
-      //       real data-access for it: `getEntryMat..()` and `getRefTerms()`.
-      //       Therefore it will have double the delay.
-      dict.getMatchesForString('', {}, inc);
+      dict.getMatchesForString     ('', {}, inc);
 
       clock.tick(99);
       count.should.equal(0);  // `inc` was not yet called by any function.
       clock.tick(1);
-      count.should.equal(12); // `inc` has been called back by all functions now.
-
-      clock.tick(100);        // Now, 200ms have passed since the start.
-      count.should.equal(13); // Also `getMatchesForString()` called back now.
+      count.should.equal(13); // `inc` has been called back by all functions now.
       cb();
     });
 
