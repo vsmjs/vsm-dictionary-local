@@ -18,6 +18,8 @@ const demo = path.resolve(__dirname, './');
 
 
 module.exports = () => ({
+  mode: 'none',
+
   devServer: {
     port: 3000,
     open: true
