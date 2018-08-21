@@ -17,59 +17,57 @@ const src  = path.resolve(__dirname, '../src');
 const demo = path.resolve(__dirname, './');
 
 
-module.exports = () => {
-  return {
-    devServer: {
-      port: 3000,
-      open: true
-    },
+module.exports = () => ({
+  devServer: {
+    port: 3000,
+    open: true
+  },
 
-    entry: src + '/DictionaryLocal.js',
+  entry: src + '/DictionaryLocal.js',
 
-    devtool: 'inline-source-map',
+  devtool: 'inline-source-map',
 
-    module: {
-      rules: [
-        {
-          test: /\.js$/,
-          include: src,
-          exclude: /(node_modules|^demo.+\.js)/,
-          use: [
-            {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                  // `esmodules: true` is necessary, as otherwise Babel causes
-                  // the error "class constructors must be invoked with |new|".
-                  // So it works only in modern browsers that support ES Modules.
-                  ['@babel/preset-env', { targets: { esmodules: true }}]
-                ]
-              }
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        include: src,
+        exclude: /(node_modules|^demo.+\.js)/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                // `esmodules: true` is necessary, as otherwise Babel causes
+                // the error "class constructors must be invoked with |new|".
+                // So it works only in modern browsers that support ES Modules.
+                ['@babel/preset-env', { targets: { esmodules: true }}]
+              ]
             }
-          ]
-        }
-      ]
-    },
+          }
+        ]
+      }
+    ]
+  },
 
-    node: {
-      fs: 'empty'
-    },
+  node: {
+    fs: 'empty'
+  },
 
-    plugins: [
-      new HtmlWebpackPlugin({
-        template: demo + '/demo.html',
-        inject: false
-      }),
-      new CopyWebpackPlugin([
-        { from: demo + '/demoData.js' },
-        { from: demo + '/demoInBrowser.js' }
-      ])
-    ],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: demo + '/demo.html',
+      inject: false
+    }),
+    new CopyWebpackPlugin([
+      { from: demo + '/demoData.js' },
+      { from: demo + '/demoInBrowser.js' }
+    ])
+  ],
 
-    output: {
-      filename: 'bundle.js',  // Used by HtmlWebpackPlugin.
-      library: 'VsmDictionaryLocal',  // } => global variable for browsers.
-      libraryTarget: 'window'         // }  " .
-    }
-  };
-};
+  output: {
+    filename: 'bundle.js',  // Used by HtmlWebpackPlugin.
+    library: 'VsmDictionaryLocal',  // } => global variable for browsers.
+    libraryTarget: 'window'         // }  " .
+  }
+});

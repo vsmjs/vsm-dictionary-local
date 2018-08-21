@@ -78,9 +78,8 @@ function createDemoPanel(opt) {
     dictInput.setAttribute('style', 'margin: 0 0 0 10px; width: 60px');
     dictInput.setAttribute('placeholder', 'dictID');
     dictInput.value = opt.dictID;
-    dictInput.addEventListener('input', function () {  // On change, reset.
-      input.value = '';
-      output.innerHTML = '';
+    dictInput.addEventListener('input', function () {
+      input.dispatchEvent(new Event('input', {}));  // Make the main input fire.
     });
   }
 
@@ -91,13 +90,13 @@ function createDemoPanel(opt) {
 
   input.addEventListener('input', function () {
     getNewMatches(
-      opt.dictionary, this.value, searchOptionsFunc(), input, output
+      opt.dictionary, this.value, searchOptionsFunc(), input, dictInput, output
     );
   });
 
   input.setAttribute('value', opt.initialSearchStr);
   getNewMatches(
-    opt.dictionary, input.value, searchOptionsFunc(), input, output
+    opt.dictionary, input.value, searchOptionsFunc(), input, dictInput, output
   );
 
   var ans = {input: input};
@@ -115,14 +114,17 @@ function createDemoPanel(opt) {
 
 
 
-function getNewMatches(dict, str, options, input, output) {
+function getNewMatches(dict, str, options, input, dictInput, output) {
   dict.getMatchesForString(str, options, function (err, res) {
     if (err)  { output.innerHTML = 'Error: ' + err;  return }
     for (var i = 0, s = '';  i < res.items.length;  i++) {
       s += matchToString(res.items[i]) + '\n';
     }
-    // Place the results, but only if the input's string hasn't changed yet.
-    if (input.value == str)  output.innerHTML = s;
+    // Place the results, but only if the inputs haven't changed yet.
+    if (input.value == str  &&  ( !dictInput || 
+        dictInput.value == options.filter.dictID[0] )) {
+      output.innerHTML = s;
+    }
   });
 }
 
