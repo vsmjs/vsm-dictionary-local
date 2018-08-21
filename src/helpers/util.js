@@ -1,10 +1,6 @@
 module.exports =
-  { undef, deepClone, strcmp, limitBetween, randomFromInterval, arrayQuery };
+  { deepClone, strcmp, limitBetween, randomFromInterval, arrayQuery };
 
-
-function undef(x) {
-  return typeof x == 'undefined';
-}
 
 
 /**
