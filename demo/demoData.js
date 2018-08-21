@@ -1,10 +1,11 @@
 // For the browser, deliver the data via a JSONP-type call.
+/* global gotData */  // Prevent ESLint error.
 if (typeof gotData !== 'undefined')  gotData(createData());
 
 
 // For Node.js, deliver the data via `module.exports`. But define `module`
 // first, for browser compatibility.
-if (typeof module === 'undefined')  { var module = {}; }
+if (typeof module === 'undefined')  { var module = {} }
 module.exports = createData();
 
 

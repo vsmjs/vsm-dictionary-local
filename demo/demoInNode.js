@@ -6,6 +6,9 @@ Just run: `node demoInNode.js`.
 */
 
 
+/* eslint-disable no-console */
+
+
 // With Node.js, we can import `VsmDictionaryLocal` with `require()`.
 // We require() the package that is exposed in the project's root folder.
 const VsmDictionaryLocal = require('..');
@@ -98,3 +101,6 @@ function matchToString(m) {
 
   return '{' + arr.join('\', ') + '}';
 }
+
+
+/* eslint-enable no-console */

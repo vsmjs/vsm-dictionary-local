@@ -13,6 +13,7 @@ an updated demo.html webpage that loads both that bundle and this demo-script.
 
 // In the browser, Webpack lets us access `VsmDictionaryLocal` as
 // a global variable.
+/* global VsmDictionaryLocal */  // Prevent ESLint error.
 runDemo();
 
 
@@ -20,7 +21,7 @@ var matchesMaxCount = 20;
 
 
 function runDemo() {
-  // Replace the warning of running demo without Webpack, with an info message.
+  // Remove the warning message of running this demo without Webpack.
   if (VsmDictionaryLocal)  document.getElementById('demo').innerHTML = '';
 
   // Load the data via a JSONP script, which will call `gotData()`.
@@ -30,7 +31,7 @@ function runDemo() {
 }
 
 
-function gotData(demoData) {
+function gotData(demoData) {  // eslint-disable-line no-unused-vars
   makeDemoLocal(demoData);
 }
 
@@ -77,7 +78,7 @@ function createDemoPanel(opt) {
     dictInput.setAttribute('style', 'margin: 0 0 0 10px; width: 60px');
     dictInput.setAttribute('placeholder', 'dictID');
     dictInput.value = opt.dictID;
-    dictInput.addEventListener('input', function (ev) {  // On change, reset.
+    dictInput.addEventListener('input', function () {  // On change, reset.
       input.value = '';
       output.innerHTML = '';
     });
@@ -88,7 +89,7 @@ function createDemoPanel(opt) {
   if (dictInput)  parent.appendChild(dictInput);
   parent.appendChild(output);
 
-  input.addEventListener('input', function (ev) {
+  input.addEventListener('input', function () {
     getNewMatches(
       opt.dictionary, this.value, searchOptionsFunc(), input, output
     );
@@ -116,7 +117,7 @@ function createDemoPanel(opt) {
 
 function getNewMatches(dict, str, options, input, output) {
   dict.getMatchesForString(str, options, function (err, res) {
-    if (err)  { output.innerHTML = 'Error: ' + err;  return; }
+    if (err)  { output.innerHTML = 'Error: ' + err;  return }
     for (var i = 0, s = '';  i < res.items.length;  i++) {
       s += matchToString(res.items[i]) + '\n';
     }

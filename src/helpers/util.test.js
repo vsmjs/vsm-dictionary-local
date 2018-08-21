@@ -7,7 +7,7 @@ const expect = chai.expect;
 describe('helpers/util.js', function() {
   describe('deepClone()', function() {
     it('deep-clones, so changes on the original object ' +
-      'do not affect the clone', function() {
+       'do not affect the clone', function() {
       var x = { a: 1,  b: {c: 1} };
       var y = deepClone(x);
       y.b.c = 2;
@@ -17,8 +17,8 @@ describe('helpers/util.js', function() {
   });
 
   describe('strcmp()', function() {
-    it('returns -1;0;1 after case-insensitively comparing <;==;> strings',
-      function() {
+    it('returns -1;0;1 after case-insensitively comparing <;==;> ' +
+       'strings', function() {
       expect(strcmp('a', 'b')).to.equal(-1);
       expect(strcmp('a', 'a')).to.equal(0);
       expect(strcmp('b', 'a')).to.equal(1);
@@ -38,12 +38,12 @@ describe('helpers/util.js', function() {
       limitBetween(4, 1, 3).should.equal(3);
     });
     it('only limits the 1st argument to be >= the 2nd, ' +
-      'if the 3rd is `null`', function() {
+       'if the 3rd is `null`', function() {
       limitBetween(0, 1, null).should.equal(1);
       limitBetween(4, 1, null).should.equal(4);
     });
     it('only limits the 1st argument to be <= the 3nd, ' +
-      'if the 2nd is `null`', function() {
+       'if the 2nd is `null`', function() {
       limitBetween(0, null, 3).should.equal(0);
       limitBetween(4, null, 3).should.equal(3);
     });

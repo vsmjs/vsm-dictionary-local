@@ -82,12 +82,12 @@ module.exports = class DictionaryLocal extends Dictionary {
 
 
   _cbDict(cb) {  // Gets called after every set of dictInfo-changing operations.
-    return (...args) => { this._sortDictInfos();  cb(...args); }
+    return (...args) => { this._sortDictInfos();  cb(...args) };
   }
 
 
   _cbEntr(cb) {
-    return (...args) => { this._sortEntries();  cb(...args); }
+    return (...args) => { this._sortEntries();  cb(...args) };
   }
 
 
@@ -111,7 +111,7 @@ module.exports = class DictionaryLocal extends Dictionary {
       (dict.entries || []) .forEach(e => {
         if (!e.dictID)  e.dictID = dict.id; // Fill in any omitted entry.dictID.
         else if (e.dictID !== dict.id) {
-          return errs.push(`an entry tries to override dictID \'${dict.id}\'`);
+          return errs.push(`an entry tries to override dictID '${dict.id}'`);
         }
 
         err = this._addEntry(e)[0];
@@ -313,12 +313,13 @@ module.exports = class DictionaryLocal extends Dictionary {
       (!o.filter.dictID || o.filter.dictID.includes(e.dictID));
 
     var sort =
-      o.sort == 'id' ?
+      o.sort == 'id' ?                               /* eslint-disable indent */
         (a, b) => strcmp(a.id, b.id) :
       o.sort == 'str' ?  // --> First sort entries by their first term-string.
         (a, b) => strcmp(a.terms[0].str, b.terms[0].str) ||
-                  strcmp(a.dictID, b.dictID) || strcmp(a.id, b.id):
+                  strcmp(a.dictID, b.dictID) || strcmp(a.id, b.id) :
         (a, b) => strcmp(a.dictID, b.dictID) || strcmp(a.id, b.id); // =Default.
+                                                      /* eslint-enable indent */
 
     var arr = this._arrayQuery(this.entries, filter, sort, o.page, o.perPage);
     callAsync(cb, this.delay, null, { items: Dictionary.zPropPrune(arr, o.z) });
@@ -392,4 +393,4 @@ module.exports = class DictionaryLocal extends Dictionary {
     callAsync(cb, this.delay, null, { items: arr });
   }
 
-}
+};

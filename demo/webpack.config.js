@@ -10,7 +10,6 @@ See also 'demoInBrowser.js'.
 
 
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -18,7 +17,7 @@ const src  = path.resolve(__dirname, '../src');
 const demo = path.resolve(__dirname, './');
 
 
-module.exports = (env = {}) => {
+module.exports = () => {
   return {
     devServer: {
       port: 3000,
@@ -72,5 +71,5 @@ module.exports = (env = {}) => {
       library: 'VsmDictionaryLocal',  // } => global variable for browsers.
       libraryTarget: 'window'         // }  " .
     }
-  }
-}
+  };
+};

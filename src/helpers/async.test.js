@@ -36,7 +36,7 @@ describe('helpers/async.js', function() {
       });
 
       it('calls a function on the next event loop with zero delay, ' +
-        'if an invalid delay value was given', function(cb) {
+         'if an invalid delay value was given', function(cb) {
         var delay = -100;
         callAsync(f, delay, 2, 5, (err, ans) => {
           ans.should.equal(10);
@@ -83,7 +83,7 @@ describe('helpers/async.js', function() {
 
 
   describe('callAsyncFor()', function() {
-    var f = (x) => x==0 ? ['e', undefined] : [null, x * 10];
+    var f = x => x == 0 ? ['e', undefined] : [null, x * 10];
     var delay = 0;
     var count;
 
@@ -92,7 +92,7 @@ describe('helpers/async.js', function() {
     });
 
     it('calls `f` on an array, without error; ' +
-      'and calls back on the next event-loop', function(cb) {
+       'and calls back on the next event-loop', function(cb) {
       callAsyncFor([1, 2], f, delay, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([10, 20]);
@@ -102,7 +102,7 @@ describe('helpers/async.js', function() {
       count = 1;
     });
     it('calls `f` on an array, including an error; ' +
-      'and calls back on the next event-loop', function(cb) {
+       'and calls back on the next event-loop', function(cb) {
       callAsyncFor([0, 1, 2], f, delay, (err, res) => {
         err.should.deep.equal(['e', null, null]);
         res.should.deep.equal([undefined, 10, 20]);
@@ -112,7 +112,7 @@ describe('helpers/async.js', function() {
       count = 1;
     });
     it('also for an empty array, ' +
-      'calls the callback on the next event-loop', function(cb) {
+       'calls the callback on the next event-loop', function(cb) {
       callAsyncFor([], f, delay, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([]);

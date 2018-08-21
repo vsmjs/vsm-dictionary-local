@@ -41,7 +41,7 @@ function randomFromInterval(delay) {
   if (Array.isArray(delay)  &&  delay.length >= 2) {
     var min = Math.max(+delay[0], 0);
     var max = Math.max(+delay[1], min);
-    return min + (Math.random() * (max - min))
+    return min + (Math.random() * (max - min));
   }
   else  return Math.max(+delay, 0);
 }
@@ -52,7 +52,7 @@ function randomFromInterval(delay) {
  * based on `filter` and `sort` functions, and pagination settings.
  */
 function arrayQuery(
-    array, filter, sort, page, perPage, perPageDefault = 20, perPageMax = 100) {
+  array, filter, sort, page, perPage, perPageDefault = 20, perPageMax = 100) {
   page    = limitBetween(page   || 1             , 1, null);
   perPage = limitBetween(perPage|| perPageDefault, 1, perPageMax);
   var skip = (page - 1) * perPage;
