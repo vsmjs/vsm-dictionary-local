@@ -12,7 +12,7 @@ const expect = chai.expect;
 const D = (obj, depth = 4) => console.dir(obj, {depth});  // eslint-disable-line
 
 
-describe('DictionaryLocal.js', function() {
+describe('DictionaryLocal.js', () => {
   var dict;
 
   // These dictInfos will be used in most of the tests.
@@ -34,12 +34,12 @@ describe('DictionaryLocal.js', function() {
 
   var count; // Helper for testing callback asynchronicity.
 
-  beforeEach(function() {
+  beforeEach(() => {
     count = 0;
   });
 
 
-  describe('dictInfos: addDictInfos()', function() {
+  describe('dictInfos: addDictInfos()', () => {
     var di1x = {id: 'A', name: 'Name 1', xx: 1};
     var di5p = {id: '' , name: 'Name 5'};
     var di6p = {id: 'F', name: ''      };
@@ -51,12 +51,12 @@ describe('DictionaryLocal.js', function() {
     var di1Err = 'dictInfo for \'A\' already exists';
     var dipErr = 'dictInfo misses a required property: id or name';
 
-    before(function() {
+    before(() => {
       dict = new DictionaryLocal();
     });
 
     it('adds a single dictInfo, prunes an invalid property, ' +
-       'and calls back on the next event-loop', function(cb) {
+       'and calls back on the next event-loop', cb => {
       dict.addDictInfos([di1x], err => {
         expect(err).to.equal(null);
         dict.dictInfos.should.deep.equal([di1]);
@@ -66,8 +66,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('adds multiple dictInfos, and sorts them in internal ' +
-       'storage', function(cb) {
+    it('adds multiple dictInfos, and sorts them in internal storage', cb => {
       dict.addDictInfos([di3, di2], err => {
         expect(err).to.equal(null);
         dict.dictInfos.should.deep.equal([di1, di2, di3]);
@@ -78,7 +77,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('gives one error, for adding a single, duplicate (same `id`) ' +
-       'dictInfo', function(cb) {
+       'dictInfo', cb => {
       dict.addDictInfos([di1], err => {
         err.should.deep.equal([di1Err]);
         dict.dictInfos.should.deep.equal([di1, di2, di3]);
@@ -90,7 +89,7 @@ describe('DictionaryLocal.js', function() {
 
     it('gives an array of errors for multiple adds, with an error for adding ' +
        'a duplicate, and one for missing `id` or `name`, ' +
-       'and a `null` for one successful add', function(cb) {
+       'and a `null` for one successful add', cb => {
       dict.addDictInfos([di1, di4, di5p, di6p], err => {
         err.should.deep.equal([di1Err, null, dipErr, dipErr]);
         dict.dictInfos.should.deep.equal([di1, di2, di3, di4]);
@@ -101,7 +100,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('adds a dictInfo with a custom `f_aci`, represented as ' +
-       'a String, and converts it to a real Function', function(cb) {
+       'a String, and converts it to a real Function', cb => {
       dict.addDictInfos([di7s], err => {
         // Note: `dict.dictInfos.should.deep.equal(...)` can not be used here,
         // because functions-properties (f_*) are never seen as deep-equal.
@@ -127,7 +126,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('adds a dictInfo with a custom `f_aci`, represented as ' +
-       'a Function', function(cb) {
+       'a Function', cb => {
       dict.addDictInfos([di7f], err => {  // Same as above; but only test f_aci.
         var N = 4;
         dict.dictInfos[N]    .f_aci(1)
@@ -136,7 +135,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
 
-    it('makes a truly async callback, also for an empty array', function(cb) {
+    it('makes a truly async callback, also for an empty array', cb => {
       dict.addDictInfos([], err => {
         expect(err).to.equal(null);
         count.should.equal(1);
@@ -147,7 +146,7 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('dictInfos: updateDictInfos()', function() {
+  describe('dictInfos: updateDictInfos()', () => {
     var di4u = {id: 'D', name: 'Name 4b'};
     var di5u = {id: 'E', name: 'Name 5'};
     var di5p = {id: '' , name: 'Name 5'};
@@ -155,12 +154,12 @@ describe('DictionaryLocal.js', function() {
     var di5uErr = 'dictInfo for \'E\' does not exist';
     var di5pErr = 'dictInfo for \'\' does not exist';
 
-    before(function(cb) {
+    before(cb => {
       dict = new DictionaryLocal();
       dict.addDictInfos([di1, di4], cb);
     });
 
-    it('updates a single dictInfo', function(cb) {
+    it('updates a single dictInfo', cb => {
       dict.updateDictInfos([di4u], (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([di4u]);
@@ -172,7 +171,7 @@ describe('DictionaryLocal.js', function() {
     });
     it('updates multiple dictInfos, and reports errors: ' +
        'one\'s ID does not exist, one\'s `id` property is missing, ' +
-       'and one succeeds', function(cb) {
+       'and one succeeds', cb => {
       dict.updateDictInfos([di5u, di5p, di4], (err, res) => {
         err.should.deep.equal([di5uErr, di5pErr, null]);
         res.should.deep.equal([null, null, di4]);
@@ -185,7 +184,7 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('dictInfos: deleteDictInfos()', function() {
+  describe('dictInfos: deleteDictInfos()', () => {
     var di2  = {id: 'B', name: 'Name 2'};
     var di3  = {id: 'C', name: 'Name 3'};
     var di4  = {id: 'D', name: 'Name 4'};
@@ -195,7 +194,7 @@ describe('DictionaryLocal.js', function() {
     var di2dErr = 'dictInfo for \'B\' still has associated entries';
     var di5uErr = 'dictInfo for \'E\' does not exist';
 
-    before(function(cb) {
+    before(cb => {
       dict = new DictionaryLocal();
       dict.addDictInfos([di2, di3, di4], err => {
         if (err)  return cb(err);
@@ -203,7 +202,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
 
-    it('deletes a single dictInfo', function(cb) {
+    it('deletes a single dictInfo', cb => {
       dict.deleteDictInfos([di3.id], err => {
         expect(err).to.equal(null);
         dict.dictInfos.should.deep.equal([di2, di4]);
@@ -214,7 +213,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('deletes multiple dictInfos: one succeeds, one errors as it still has' +
-       'associated entries, one errors as it does not exist', function(cb) {
+       'associated entries, one errors as it does not exist', cb => {
       dict.deleteDictInfos([di4.id, di2.id, di5u.id], err => {
         err.should.deep.equal([null, di2dErr, di5uErr]);
         dict.dictInfos.should.deep.equal([di2]);
@@ -226,7 +225,7 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('entries: addEntries()', function() {
+  describe('entries: addEntries()', () => {
     var e1q = {id:'A:01', dictID:'A', terms: [{str:'in', q: 1}], q: 2 };
     var e1z = {id:'A:01', dictID:'A', terms: [{str:'in'}], z: {k: 0} };
     var e5p = {id:''    , dictID:'A', terms: [{str:'in'}] };  // Property-error.
@@ -242,12 +241,12 @@ describe('DictionaryLocal.js', function() {
     var etErr = 'invalid term';
     var e8Err = 'entry is linked to non-existent dictID \'X\'';
 
-    before(function(cb) {
+    before(cb => {
       dict = new DictionaryLocal();
       dict.addDictInfos([di1, di2, di3, di4], cb);
     });
 
-    it('adds a single entry (given in a one-element array)', function(cb) {
+    it('adds a single entry (given in a one-element array)', cb => {
       dict.addEntries([e1], err => {
         expect(err).to.equal(null);
         dict.entries.should.deep.equal([e1]);
@@ -257,8 +256,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('adds multiple entries, and sorts them in internal ' +
-       'storage', function(cb) {
+    it('adds multiple entries, and sorts them in internal storage', cb => {
       dict.addEntries([e3, e2], err => {
         expect(err).to.equal(null);
         dict.entries.should.deep.equal([e1, e2, e3]);
@@ -268,7 +266,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('does not add entry if one with same ID already exists', function(cb) {
+    it('does not add entry if one with same ID already exists', cb => {
       dict.addEntries([e1], err => {
         err.should.deep.equal([e1Err]);
         dict.entries.should.deep.equal([e1, e2, e3]);
@@ -279,7 +277,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('accepts multiple additions, and reports error for duplicate addition ' +
-       'via an error-msg/`null` array', function(cb) {
+       'via an error-msg/`null` array', cb => {
       dict.addEntries([e1, e4], err => {
         err.should.deep.equal([e1Err, null]);
         dict.entries.should.deep.equal([e1, e2, e3, e4]);
@@ -289,7 +287,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('reports errors for missing `id`, `dictID`, or `terms`', function(cb) {
+    it('reports errors for missing `id`, `dictID`, or `terms`', cb => {
       dict.addEntries([e5p, e6p, e7p1], err => {
         err.should.deep.equal([epErr, epErr, epErr]);
         dict.entries.should.deep.equal([e1, e2, e3, e4]);
@@ -299,7 +297,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('reports error for empty `terms` array', function(cb) {
+    it('reports error for empty `terms` array', cb => {
       dict.addEntries([e7p2], err => {
         err.should.deep.equal([epErr]);
         dict.entries.should.deep.equal([e1, e2, e3, e4]);
@@ -309,7 +307,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('reports error for invalid term', function(cb) {
+    it('reports error for invalid term', cb => {
       dict.addEntries([e7p3], err => {
         err.should.deep.equal([etErr]);
         dict.entries.should.deep.equal([e1, e2, e3, e4]);
@@ -319,7 +317,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('reports error for nonexistent linked dictID', function(cb) {
+    it('reports error for nonexistent linked dictID', cb => {
       dict.addEntries([e8], err => {
         err.should.deep.equal([e8Err]);
         dict.entries.should.deep.equal([e1, e2, e3, e4]);
@@ -329,7 +327,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('internally sorts on dictID first and then on conceptID', function(cb) {
+    it('internally sorts on dictID first and then on conceptID', cb => {
       dict.addEntries([e11], err => {
         expect(err).to.equal(null);
         dict.entries.should.deep.equal([e1, e2, e11, e3, e4]);
@@ -339,7 +337,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('before storing an entry, removes unsupported properties ', function(cb) {
+    it('before storing an entry, removes unsupported properties ', cb => {
       dict = new DictionaryLocal({ dictData: [di1] });
       dict.addEntries([e1q], err => {
         expect(err).to.equal(null);
@@ -350,7 +348,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('before storing an entry, deep-clones its `z` property', function(cb) {
+    it('before storing an entry, deep-clones its `z` property', cb => {
       var orig = deepClone(e1z);  // This lets us leave `e1z` untouched.
       var clon = deepClone(e1z);  // Another independent, deep clone of `e1z`.
       dict = new DictionaryLocal({ dictData: [di1] });
@@ -369,8 +367,8 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('entries: updateEntries()', function() {
-    before(function(cb) {
+  describe('entries: updateEntries()', () => {
+    before(cb => {
       dict = new DictionaryLocal();
       dict.addDictInfos([di1, di2, di3, di4], err => {
         if (err)  return cb(err);
@@ -386,7 +384,7 @@ describe('DictionaryLocal.js', function() {
     var e8Err  = 'entry is linked to non-existent dictID \'X\'';
 
     it('reports errors for: non-existent ID; ' +
-       'missing `id` property; non-existent linked dictID', function(cb) {
+       'missing `id` property; non-existent linked dictID', cb => {
       dict.updateEntries([e5u, e5p, e8u], (err, res) => {
         err.should.deep.equal([e5uErr, e5pErr, e8Err]);
         res.should.deep.equal([null, null, null]);
@@ -403,8 +401,7 @@ describe('DictionaryLocal.js', function() {
     var e1uRes1 = {id:'A:01', dictID:'B', terms:[{str:'in'}], z: {a: 1, b: 2}};
 
     it('can in a single update: update `dictID`, and apply `zDel` before `z`; '+
-       'and updates internal `entries`-sorting based on new `' +
-       'dictID`', function(cb) {
+       'and updates internal `entries`-sorting based on new `dictID`', cb => {
       dict.updateEntries([e1uObj1], (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([e1uRes1]);
@@ -423,7 +420,7 @@ describe('DictionaryLocal.js', function() {
 
     it('can in a single-item array-update: apply `termsDel` before `terms`, ' +
        'add a single term via the `terms`-prop, and merge properties into ' +
-       '`z`', function(cb) {
+       '`z`', cb => {
       dict.updateEntries([e1uObj2], (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([e1uRes2]);
@@ -443,7 +440,7 @@ describe('DictionaryLocal.js', function() {
 
     it('can in a single update: delete a single term, ' +
        'add/update multiple terms (including a duplicate one), and ' +
-       'delete a single `z`-property', function(cb) {
+       'delete a single `z`-property', cb => {
       dict.updateEntries([e1uObj3], (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([e1uRes3]);
@@ -461,7 +458,7 @@ describe('DictionaryLocal.js', function() {
 
     it('can in a single update: delete multiple terms (ignoring absent one), ' +
        'update one, and delete multiple `z`-properties (ignoring absent ' +
-       'one)', function(cb) {
+       'one)', cb => {
       dict.updateEntries([e1uObj4], (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([e1uRes4]);
@@ -476,7 +473,7 @@ describe('DictionaryLocal.js', function() {
     var e1u5Err = 'entry would have no terms left';
 
     it('errors when trying to delete last term, ' +
-       'and applies none of the other changes', function(cb) {
+       'and applies none of the other changes', cb => {
       dict.updateEntries([e1uObj5], (err, res) => {
         expect(err).to.deep.equal([e1u5Err]);
         expect(res).to.deep.equal([null]);
@@ -490,7 +487,7 @@ describe('DictionaryLocal.js', function() {
     var e1uObj6 = {id: 'A:01', zDel: true };
     var e1uRes6 = e1;
 
-    it('can delete `z` fully', function(cb) {
+    it('can delete `z` fully', cb => {
       dict.updateEntries([e1uObj6], (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([e1uRes6]);
@@ -504,7 +501,7 @@ describe('DictionaryLocal.js', function() {
     var e1uObj7 = {id: 'A:01', zDel: ['xy'] };
     var e1uRes7 = e1;
 
-    it('works with a `zDel` array, on entries without `z`-prop', function(cb) {
+    it('works with a `zDel` array, on entries without `z`-prop', cb => {
       dict.updateEntries([e1uObj7], (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal([e1uRes7]);
@@ -517,11 +514,11 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('entries: deleteEntries()', function() {
+  describe('entries: deleteEntries()', () => {
     var e5u = {id:'E:01', z: 'x'};
     var e5uErr = 'entry for \'E:01\' does not exist';
 
-    before(function(cb) {
+    before(cb => {
       dict = new DictionaryLocal();
       dict.addDictInfos([di1, di2, di3, di4], err => {
         if (err)  return cb(err);
@@ -529,7 +526,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
 
-    it('deletes a single entry', function(cb) {
+    it('deletes a single entry', cb => {
       dict.deleteEntries([e3.id], err => {
         expect(err).to.equal(null);
         dict.entries.should.deep.equal([e2, e4]);
@@ -540,7 +537,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('deletes multiple entries; with one succeeding, and one errors ' +
-       'because its ID does not exist in the storage', function(cb) {
+       'because its ID does not exist in the storage', cb => {
       dict.deleteEntries([e4.id, e5u.id], err => {
         err.should.deep.equal([null, e5uErr]);
         dict.entries.should.deep.equal([e2]);
@@ -552,14 +549,14 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('refTerms: addRefterms()', function() {
+  describe('refTerms: addRefterms()', () => {
     var emptyErr = 'empty refTerm';
 
-    before(function() {
+    before(() => {
       dict = new DictionaryLocal();
     });
 
-    it('adds a single refTerm', function(cb) {
+    it('adds a single refTerm', cb => {
       dict.addRefTerms([r2], err => {
         expect(err).to.equal(null);
         dict.refTerms.should.deep.equal([r2]);
@@ -570,7 +567,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('adds multiple refTerms, deduplicates them, ' +
-       'and sorts them in internal storage', function(cb) {
+       'and sorts them in internal storage', cb => {
       dict.addRefTerms([r3, r2, r1], err => {
         expect(err).to.equal(null);
         dict.refTerms.should.deep.equal([r1, r2, r3]);
@@ -580,7 +577,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('does not add the empty string', function(cb) {
+    it('does not add the empty string', cb => {
       dict.addRefTerms([''], err => {
         err.should.deep.equal([emptyErr]);
         dict.refTerms.should.deep.equal([r1, r2, r3]);
@@ -592,16 +589,16 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('refTerms: deleteRefTerms()', function() {
+  describe('refTerms: deleteRefTerms()', () => {
     var r4 = 'xx';
     var r4Err = 'refTerm \'xx\' does not exist';
 
-    before(function(cb) {
+    before(cb => {
       dict = new DictionaryLocal();
       dict.addRefTerms([r1, r2, r3], cb);
     });
 
-    it('deletes a single refTerm', function(cb) {
+    it('deletes a single refTerm', cb => {
       dict.deleteRefTerms([r2], err => {
         expect(err).to.equal(null);
         dict.refTerms.should.deep.equal([r1, r3]);
@@ -612,7 +609,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('deletes multiple refTerms, ' +
-       'and reports an error for a non-existent one', function(cb) {
+       'and reports an error for a non-existent one', cb => {
       dict.deleteRefTerms([r4, r3], err => {
         err.should.deep.equal([r4Err, null]);
         dict.refTerms.should.deep.equal([r1]);
@@ -624,14 +621,14 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('-> addDictionaryData()', function() {
+  describe('-> addDictionaryData()', () => {
     var data1, data2, di2u;
     var edErr = 'an entry tries to override dictID \'C\'';
 
     var augment = (...args) => Object.assign({}, ...args);
     var withoutDictID = e => { e = deepClone(e);  delete e.dictID;  return e };
 
-    before(function() {
+    before(() => {
       data1 = [
         augment(di1, { entries: [e1, e2] }),
         di2
@@ -655,7 +652,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('can in one synchronous call: add dictInfos, entries, and ' +
-       'refTerms', function() {
+       'refTerms', () => {
       expect(dict.addDictionaryData(data1, [r1])).to.equal(null);
       dict.dictInfos.should.deep.equal([di1, di2]);
       dict.entries.should.deep.equal([e1, e2]);
@@ -664,7 +661,7 @@ describe('DictionaryLocal.js', function() {
 
     // --- Test addDictionaryData().
     it('can add or update dictInfos and add refTerms, with the same features ' +
-       'as the asynchronous calls, plus some convenience features', function() {
+       'as the asynchronous calls, plus some convenience features', () => {
       // The features tested here in the combined test, are:
       // - it sorts (in internal storage) entries by dictID, then conceptID;
       // - it accepts entries with omitted dictID, or overriding dictID;
@@ -679,26 +676,26 @@ describe('DictionaryLocal.js', function() {
       dict.refTerms.should.deep.equal([r1, r2, r3]);
     });
 
-    it('accepts undefined, returns `null` on no errors', function() {
+    it('accepts undefined, returns `null` on no errors', () => {
       expect(dict.addDictionaryData()).to.equal(null);
     });
 
-    it('accepts dictInfos without an `entries` property', function() {
+    it('accepts dictInfos without an `entries` property', () => {
       expect(dict.addDictionaryData([di4, di2])).to.equal(null);
       dict.dictInfos.should.deep.equal([di1, di2, di3, di4]);
     });
 
-    it('gets called by the constructor, for `options.dictData`', function() {
+    it('gets called by the constructor, for `options.dictData`', () => {
       var dict2 = new DictionaryLocal({ dictData: [di1] });
       dict2.dictInfos.should.deep.equal([di1]);
     });
 
-    it('gets called by the constructor, for `options.refTerms`', function() {
+    it('gets called by the constructor, for `options.refTerms`', () => {
       var dict2 = new DictionaryLocal({ refTerms: [r1] });
       dict2.refTerms.should.deep.equal([r1]);
     });
 
-    it('gets called by the constructor, which throws upon error', function() {
+    it('gets called by the constructor, which throws upon error', () => {
       var threwError = 0;
       try {
         new DictionaryLocal({
@@ -746,12 +743,12 @@ describe('DictionaryLocal.js', function() {
   }
 
 
-  describe('get: getDictInfos()', function() {
-    before(function() {
+  describe('get: getDictInfos()', () => {
+    before(() => {
       loadDataForGet();
     });
 
-    it('gets all, by default sorted by id', function(cb) {
+    it('gets all, by default sorted by id', cb => {
       dict.getDictInfos({}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [di1,di2,di3, di5, di4]});
@@ -760,7 +757,7 @@ describe('DictionaryLocal.js', function() {
       });
       count = 1;
     });
-    it('gets for one dictID', function(cb) {
+    it('gets for one dictID', cb => {
       dict.getDictInfos({filter: {id: ['B']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [di2]});
@@ -768,21 +765,21 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('gets for multiple dictIDs, leaving out invalid ones, ' +
-       'and sorts by `id`', function(cb) {
+       'and sorts by `id`', cb => {
       dict.getDictInfos({filter: {id: ['D', 'B', 'xx']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [di2, di4]});
         cb();
       });
     });
-    it('gets a `page` 1, with a `perPage` of 1', function(cb) {
+    it('gets a `page` 1, with a `perPage` of 1', cb => {
       dict.getDictInfos({page: 1, perPage: 1}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [di1]});
         cb();
       });
     });
-    it('gets a `page` 2, with a `perPage` of 3', function(cb) {
+    it('gets a `page` 2, with a `perPage` of 3', cb => {
       dict.getDictInfos({page: 2, perPage: 3}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [di5, di4]});
@@ -790,7 +787,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('filters for several ids, sorts by name, maps an ' +
-       'invalid `page` number onto 1, and uses a `perPage` of 2', function(cb) {
+       'invalid `page` number onto 1, and uses a `perPage` of 2', cb => {
       dict.getDictInfos(
         {filter: {id: ['D', 'C', 'C2']}, sort: 'name', page: -2, perPage: 2},
         (err, res) => {
@@ -800,7 +797,7 @@ describe('DictionaryLocal.js', function() {
         });
     });
     it('filters for a dictInfo-name, and maps an invalid `perPage` onto ' +
-       '1', function(cb) {
+       '1', cb => {
       dict.getDictInfos(
         {filter: {name: ['Name 2']}, perPage: 0},
         (err, res) => {
@@ -812,12 +809,12 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('get: getEntries()', function() {
-    before(function() {
+  describe('get: getEntries()', () => {
+    before(() => {
       loadDataForGet();
     });
 
-    it('gets all, and sorts by default by `dictID`, then `id`', function(cb) {
+    it('gets all, and sorts by default by `dictID`, then `id`', cb => {
       dict.getEntries({}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [e1, e2, e3, e4, e12]});
@@ -826,21 +823,21 @@ describe('DictionaryLocal.js', function() {
       });
       count = 1;
     });
-    it('gets all, sorting by entries\' first term\'s string', function(cb) {
+    it('gets all, sorting by entries\' first term\'s string', cb => {
       dict.getEntries({sort: 'str'}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [e3, e1, e12, e2, e4]});
         cb();
       });
     });
-    it('gets all, sorted by their `id`', function(cb) {
+    it('gets all, sorted by their `id`', cb => {
       dict.getEntries({sort: 'id'}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [e1, e2, e12, e3, e4]});
         cb();
       });
     });
-    it('gets for one `id`', function(cb) {
+    it('gets for one `id`', cb => {
       dict.getEntries({filter: {id: ['B:01']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [e3]});
@@ -848,42 +845,42 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('gets for multiple IDs, leaving out invalid ones, ' +
-       'and sorts by default by `dictID` first', function(cb) {
+       'and sorts by default by `dictID` first', cb => {
       dict.getEntries({filter: {id: ['B:00', 'B:01', 'XX']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [e3, e12]});
         cb();
       });
     });
-    it('does not error for all absent ids, just returns `[]`', function(cb) {
+    it('does not error for all absent ids, just returns `[]`', cb => {
       dict.getEntries({filter: {id: ['XX', 'YY']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: []});
         cb();
       });
     });
-    it('gets for one `dictID`, and `id`', function(cb) {
+    it('gets for one `dictID`, and `id`', cb => {
       dict.getEntries({filter: {dictID: ['C'], id: ['B:00']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [e12]});
         cb();
       });
     });
-    it('gets for multiple dictIDs', function(cb) {
+    it('gets for multiple dictIDs', cb => {
       dict.getEntries({filter: {dictID: ['C', 'A']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [e1, e2, e12]});
         cb();
       });
     });
-    it('gets all, using pagination settings', function(cb) {
+    it('gets all, using pagination settings', cb => {
       dict.getEntries({page: 2, perPage: 2}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [e3, e4]});
         cb();
       });
     });
-    it('gets for one ID, with all `z`-props', function(cb) {
+    it('gets for one ID, with all `z`-props', cb => {
       dict.getEntries({filter: {id: ['B:00']}, z: true}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [e12]});
@@ -891,7 +888,7 @@ describe('DictionaryLocal.js', function() {
         cb();
       });
     });
-    it('gets for on ID, with deleted `z`-props', function(cb) {
+    it('gets for on ID, with deleted `z`-props', cb => {
       dict.getEntries({filter: {id: ['B:00']}, z: []}, (err, res) => {
         expect(err).to.equal(null);
         expect(res.items[0].z).to.equal(undefined);
@@ -899,14 +896,14 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('gets for one ID, and deletes `z` if requested to keep only ' +
-       'a non-existent `z`-prop', function(cb) {
+       'a non-existent `z`-prop', cb => {
       dict.getEntries({filter: {id: ['B:00']}, z: ['x']}, (err, res) => {
         expect(err).to.equal(null);
         expect(res.items[0].z).to.equal(undefined);  // Note: undefined, not {}.
         cb();
       });
     });
-    it('gets for one ID, and keeps only one requested `z`-prop', function(cb) {
+    it('gets for one ID, and keeps only one requested `z`-prop', cb => {
       dict.getEntries({filter: {id: ['B:00']}, z: ['b']}, (err, res) => {
         expect(err).to.equal(null);
         expect(res.items[0].z).to.deep.equal({b: 2});
@@ -914,7 +911,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('gets for one ID, keeps only requested `z`-props, ' +
-       'and ignores a non-existent `z`-prop', function(cb) {
+       'and ignores a non-existent `z`-prop', cb => {
       dict.getEntries({filter: {id: ['B:00']}, z: ['c','a','x']}, (err, res) => {
         expect(err).to.equal(null);
         expect(res.items[0].z).to.deep.equal({a: 1, c: 3});
@@ -924,12 +921,12 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('get: getRefTerms()', function() {
-    before(function() {
+  describe('get: getRefTerms()', () => {
+    before(() => {
       loadDataForGet();
     });
 
-    it('gets all', function(cb) {
+    it('gets all', cb => {
       dict.getRefTerms({}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [r1, r2, r3]});
@@ -938,21 +935,21 @@ describe('DictionaryLocal.js', function() {
       });
       count = 1;
     });
-    it('gets for one String', function(cb) {
+    it('gets for one String', cb => {
       dict.getRefTerms({filter: {str: ['that']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [r2]});
         cb();
       });
     });
-    it('gets for several Strings, and sorts', function(cb) {
+    it('gets for several Strings, and sorts', cb => {
       dict.getRefTerms({filter: {str: ['this', 'it']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [r1, r3]});
         cb();
       });
     });
-    it('does not return anything for the empty string', function(cb) {
+    it('does not return anything for the empty string', cb => {
       var count = 0;
       dict.getRefTerms({ filter: { str: [''] } }, (err, res) => {
         expect(err).to.equal(null);
@@ -984,8 +981,8 @@ describe('DictionaryLocal.js', function() {
   var rm9 = Object.assign({}, rm1, {str: r9});
 
 
-  describe('get matches: getMatchesForString()', function() {
-    before(function() {
+  describe('get matches: getMatchesForString()', () => {
+    before(() => {
       loadDataForGet();
     });
 
@@ -998,7 +995,7 @@ describe('DictionaryLocal.js', function() {
     // - z-prop pruning (i.e.: 'z-object subproperty pruning').
     it('can match multiple terms per entry; sorts by ' +
        'S/T-type match first, then case-insensitively by string-term, ' +
-       'and then by its own dictID', function(cb) {
+       'and then by its own dictID', cb => {
       dict.getMatchesForString('i', {}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [
@@ -1014,7 +1011,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;  // Test for true-asynchronicity at least one, for this function.
     });
     it('sorts by given dictIDs first, then S/T, ' +
-       'and then case-insensitively by term-string', function(cb) {
+       'and then case-insensitively by term-string', cb => {
       dict.getMatchesForString('i', {sort: {dictID: ['C']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [
@@ -1028,7 +1025,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('matches case-insensitively, ' +
-       'and sorts S(prefix)-matches before T(infix)-matches', function(cb) {
+       'and sorts S(prefix)-matches before T(infix)-matches', cb => {
       dict.getMatchesForString('N', {}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [
@@ -1041,14 +1038,14 @@ describe('DictionaryLocal.js', function() {
         cb();
       });
     });
-    it('filters by a given dictID', function(cb) {
+    it('filters by a given dictID', cb => {
       dict.getMatchesForString('n', {filter: {dictID: ['B']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [s4]});
         cb();
       });
     });
-    it('sorts first by given dictID first, then by S/T-type', function(cb) {
+    it('sorts first by given dictID first, then by S/T-type', cb => {
       dict.getMatchesForString('n', {sort: {dictID: ['C']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [
@@ -1063,7 +1060,7 @@ describe('DictionaryLocal.js', function() {
     });
     it('sorts-by-dictID, only by dividing matches in two groups: ' +
        'those with a dictID in the list, and those not; so it does not follow ' +
-       'any order in `options.sort.dictID`', function(cb) {
+       'any order in `options.sort.dictID`', cb => {
       dict.getMatchesForString('n', {sort: {dictID: ['C','A']}}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [
@@ -1077,7 +1074,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('can combine a filter for dictIDs, with a narrower sort, ' +
-       'which puts matches with one of those dictIDs first', function(cb) {
+       'which puts matches with one of those dictIDs first', cb => {
       var options = { filter: {dictID: ['B', 'C']}, sort: {dictID: ['C']} };
       dict.getMatchesForString('n', options, (err, res) => {
         expect(err).to.equal(null);
@@ -1085,14 +1082,14 @@ describe('DictionaryLocal.js', function() {
         cb();
       });
     });
-    it('can return zero matches', function(cb) {
+    it('can return zero matches', cb => {
       dict.getMatchesForString('xx', {}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: []});
         cb();
       });
     });
-    it('returns no matches for an empty string', function(cb) {
+    it('returns no matches for an empty string', cb => {
       dict.getMatchesForString('', {}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: []});
@@ -1100,7 +1097,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('sorts by term-string, then dictID, and then by term-position ' +
-       'in its entry\'s term-list, and then by conceptID', function(cb) {
+       'in its entry\'s term-list, and then by conceptID', cb => {
       var e91 = {id:'A:00a', dictID:'A', terms: [ {str: 'in'} ] };
       var e92 = {id:'A:00b', dictID:'A', terms: [ {str: 'xx'}, {str: 'in'} ] };
       var s91  = s(e91);
@@ -1127,21 +1124,21 @@ describe('DictionaryLocal.js', function() {
         });
       });
     });
-    it('supports pagination', function(cb) {
+    it('supports pagination', cb => {
       dict.getMatchesForString('in', {page: 1, perPage: 2}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [s1, s12]});  // [in, *in|Iz|hi], --inn--
         cb();
       });
     });
-    it('supports pagination, page 2', function(cb) {
+    it('supports pagination, page 2', cb => {
       dict.getMatchesForString('in', {page: 2, perPage: 2}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [s2]});  // --in, *in|Iz|hi--, [inn]
         cb();
       });
     });
-    it('z-prop pruning: deletes `z` completely', function(cb) {
+    it('z-prop pruning: deletes `z` completely', cb => {
       dict.getMatchesForString('hi', {z: []}, (err, res) => {
         expect(err).to.equal(null);
         var m = Object.assign({}, s12c);  // (Shallow-)clone before modifying.
@@ -1151,7 +1148,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('z-prop pruning: deletes `z` completely when asked to keep only ' +
-      'a non-existent sub-property', function(cb) {
+      'a non-existent sub-property', cb => {
       dict.getMatchesForString('hi', {z: ['xx']}, (err, res) => {
         expect(err).to.equal(null);
         var m = Object.assign({}, s12c);
@@ -1160,14 +1157,14 @@ describe('DictionaryLocal.js', function() {
         cb();
       });
     });
-    it('z-prop pruning: keeps all', function(cb) {
+    it('z-prop pruning: keeps all', cb => {
       dict.getMatchesForString('hi', {z: true}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [s12c]});
         cb();
       });
     });
-    it('z-prop pruning: keeps one', function(cb) {
+    it('z-prop pruning: keeps one', cb => {
       dict.getMatchesForString('hi', {z: ['b']}, (err, res) => {
         expect(err).to.equal(null);
         var m = Object.assign({}, s12c, {z: {b: 2}});
@@ -1175,7 +1172,7 @@ describe('DictionaryLocal.js', function() {
         cb();
       });
     });
-    it('z-prop pruning: keeps some, ignoring nonexistent one', function(cb) {
+    it('z-prop pruning: keeps some, ignoring nonexistent one', cb => {
       dict.getMatchesForString('hi', {z: ['c', 'xx', 'a']}, (err, res) => {
         expect(err).to.equal(null);
         var m = Object.assign({}, s12c, {z: {a: 1, c: 3}});
@@ -1184,7 +1181,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
 
-    it('returns a refTerm match', function(cb) {
+    it('returns a refTerm match', cb => {
       dict.getMatchesForString('it', {}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [rm1]});
@@ -1192,7 +1189,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('returns a refTerm match, sorted before other matches, no matter what ' +
-       'the other matches should be sorted like', function(cb) {
+       'the other matches should be sorted like', cb => {
       dict.addDictionaryData([], [r9]);  // Temporarily add an extra refTerm.
       dict.refTerms.should.deep.equal([r9, r1, r2, r3]);
 
@@ -1209,10 +1206,10 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('get matches: getMatchesForString() + fixedTerms', function() {
+  describe('get matches: getMatchesForString() + fixedTerms', () => {
     var idts;  // Some fixedTerms (= id + term-string objects).
 
-    before(function(cb) {
+    before(cb => {
       loadDataForGet();
 
       // Load some items into the parent class's `fixedTermsCache`.
@@ -1230,7 +1227,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('prepends a fixedTerm match, and deduplicates ' +
-       'between fixedTerms matches and normal matches', function(cb) {
+       'between fixedTerms matches and normal matches', cb => {
       dict.getMatchesForString('i', {idts: idts}, (err, res) => {
         expect(err).to.equal(null);
         // Explanation for the first three tests:
@@ -1248,7 +1245,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
     it('on a page 1, adds fixedTerm-matches, ' +
-       'in addition to the requested number of normal matches', function(cb) {
+       'in addition to the requested number of normal matches', cb => {
       dict.getMatchesForString('i', {idts, perPage: 3, page: 1}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [f12b, s1, s12, s2]}); // See expl. above.
@@ -1258,7 +1255,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
     it('on a page 2, adds no fixedTerm-matches, ' +
-       'and does not deduplicate with fixedTerms', function(cb) {
+       'and does not deduplicate with fixedTerms', cb => {
       dict.getMatchesForString('i', {idts, perPage: 3, page: 2}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [s12b, t12c]}); // See expl. above.
@@ -1268,7 +1265,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
     it('prepends a fixedTerm match, and deduplicates; and does this ' +
-       'no matter what the normal matches are sorted like', function(cb) {
+       'no matter what the normal matches are sorted like', cb => {
       var options = {idts: idts, sort: {dictID: ['C']}};
       dict.getMatchesForString('n', options, (err, res) => {
         expect(err).to.equal(null);
@@ -1282,7 +1279,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
     it('returns only normal matches if no fixedTerms are requested, ' +
-       'even when `fixedTermsCache` is non-empty', function(cb) {
+       'even when `fixedTermsCache` is non-empty', cb => {
       dict.getMatchesForString('n', {sort: {dictID: ['C']}}, (err, res) => {
         expect(err).to.equal(null);
         // Same as above, but without fixedTerm-adding and -deduplication.
@@ -1293,7 +1290,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
     it('returns matches for all fixedTerms from `options.idts`, when given ' +
-       'an empty search-string, and sorts them alphabetically', function(cb) {
+       'an empty search-string, and sorts them alphabetically', cb => {
       dict.getMatchesForString('', {idts}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [f12b, f4]});  // : in|*Iz|hi, Na+Cl-.
@@ -1303,7 +1300,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
     it('returns no matches at all for an empty string, if no fixedTerms are ' +
-       'requested, also when `fixedTermsCache` is non-empty', function(cb) {
+       'requested, also when `fixedTermsCache` is non-empty', cb => {
       dict.getMatchesForString('', {}, (err, res) => {
         expect(err).to.equal(null);
         // Same as above, but without fixedTerm-adding.
@@ -1313,7 +1310,7 @@ describe('DictionaryLocal.js', function() {
       });
       count = 1;
     });
-    it('returns a G(infix)-type fixedTerm-match', function(cb) {
+    it('returns a G(infix)-type fixedTerm-match', cb => {
       dict.getMatchesForString('z', {idts: idts}, (err, res) => {
         expect(err).to.equal(null);
         res.should.deep.equal({items: [s(e12, 1, 'G')]});
@@ -1323,7 +1320,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
     it('returns fixedTerms, and sorts them by F(prefix)/G(infix)-type, ' +
-       'before any alphabetic sorting', function(cb) {
+       'before any alphabetic sorting', cb => {
       var g12a = s(e12, 0, 'G');
       var idtsX = [{id: e12.id}];
       var idts2 = idts.concat(idtsX);
@@ -1352,7 +1349,7 @@ describe('DictionaryLocal.js', function() {
       });
     });
     it('returns a refTerm match, then fixedTerm matches, then normal ' +
-       'matches', function(cb) {
+       'matches', cb => {
       dict.addDictionaryData([], [r9]);
       dict.refTerms.should.deep.equal([r9, r1, r2, r3]);
 
@@ -1374,12 +1371,12 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('get matches: getMatchesForString() + number-strings', function() {
-    before(function() {
+  describe('get matches: getMatchesForString() + number-strings', () => {
+    before(() => {
       loadDataForGet();
     });
 
-    it('returns a match-object for a number-string', function(cb) {
+    it('returns a match-object for a number-string', cb => {
       dict.getMatchesForString('5', {}, (err, res) => {
         expect(err).to.equal(null);
         // We don't test the exact value of the conceptID and dictID, because
@@ -1399,7 +1396,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
     it('uses the original string for calling ' +
-       '`super.addExtraMatchesForString()`', function(cb) {
+       '`super.addExtraMatchesForString()`', cb => {
       dict.getMatchesForString('1e3', {}, (err, res) => {
         res.items.should.deep.equal([
           {id: '00:1e+3', dictID: '00', str: '1e3', descr:'number', type:'N'}]);
@@ -1410,8 +1407,7 @@ describe('DictionaryLocal.js', function() {
         });
       });
     });
-    it('returns no match for a number-string, when that is ' +
-       'deactivated', function(cb) {
+    it('returns no match for a number-string, when that is deactivated', cb => {
       var dict2 = new DictionaryLocal({numberMatchConfig: false});
       dict2.getMatchesForString('5', {}, (err, res) => {
         expect(err).to.equal(null);
@@ -1422,7 +1418,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
     it('uses custom settings for building a match-object for a ' +
-       'number-string', function(cb) {
+       'number-string', cb => {
       var dict2 = new DictionaryLocal(
         { numberMatchConfig: { dictID: 'XX', conceptIDPrefix: 'XX:' } }
       );
@@ -1436,7 +1432,7 @@ describe('DictionaryLocal.js', function() {
       count = 1;
     });
 
-    it('sorts match-types in this order:  N, R,  F, G,  S, T', function(cb) {
+    it('sorts match-types in this order:  N, R,  F, G,  S, T', cb => {
       // This test generates match-objects for all possible types.
       // We'll use the search-string '5', which already gives a number-match.
       var dict2 = new DictionaryLocal(
@@ -1475,8 +1471,8 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('options `perPageDefault` and `perPageMax`', function() {
-    it('uses the constructor option `perPageDefault`', function(cb) {
+  describe('options `perPageDefault` and `perPageMax`', () => {
+    it('uses the constructor option `perPageDefault`', cb => {
       var dict = new DictionaryLocal({perPageDefault: 3});
       dict.addDictInfos([di1, di2], err => {
         dict.addEntries([e1, e2, e3, e4], err => {
@@ -1487,7 +1483,7 @@ describe('DictionaryLocal.js', function() {
         });
       });
     });
-    it('uses the constructor option `perPageMax`', function(cb) {
+    it('uses the constructor option `perPageMax`', cb => {
       var dict = new DictionaryLocal({perPageMax: 2});
       dict.addDictInfos([di1, di2], err => {
         dict.addEntries([e1, e2, e3, e4], err => {
@@ -1501,22 +1497,22 @@ describe('DictionaryLocal.js', function() {
   });
 
 
-  describe('option `delay`', function() {
+  describe('option `delay`', () => {
     var count;
     var inc = () => ++count;
     var clock;  // See https://stackoverflow.com/questions/17446064
 
-    beforeEach(function() {
+    beforeEach(() => {
       count = 0;
       clock = sinon.useFakeTimers();
     });
 
-    afterEach(function() {
+    afterEach(() => {
       clock.restore();
     });
 
     it('uses the constructor option `delay` in all async public ' +
-       'functions', function(cb) {
+       'functions', cb => {
       var dict = new DictionaryLocal({delay: 100});
       dict.addDictInfos   ([], inc);
       dict.updateDictInfos([], inc);
@@ -1540,7 +1536,7 @@ describe('DictionaryLocal.js', function() {
     });
 
     it('calls a callback on the next event loop with no delay, ' +
-       'if an invalid delay value was given', function(cb) {
+       'if an invalid delay value was given', cb => {
       var dict = new DictionaryLocal({delay: -100});
       dict.getDictInfos({}, inc);  // We test with this function only.
       clock.tick(1);
@@ -1548,7 +1544,7 @@ describe('DictionaryLocal.js', function() {
       cb();
     });
 
-    it('calls a callback after a given delay value', function(cb) {
+    it('calls a callback after a given delay value', cb => {
       var dict = new DictionaryLocal({delay: 200});
       dict.getDictInfos({}, inc);
       clock.tick(199);
@@ -1558,7 +1554,7 @@ describe('DictionaryLocal.js', function() {
       cb();
     });
 
-    it('calls a callback after a given delay range', function(cb) {
+    it('calls a callback after a given delay range', cb => {
       var dict = new DictionaryLocal({delay: [300, 500]});
       dict.getDictInfos({}, inc);
       clock.tick(299);
@@ -1568,7 +1564,7 @@ describe('DictionaryLocal.js', function() {
       cb();
     });
 
-    it('-> setDelay() can set a new delay value', function(cb) {
+    it('-> setDelay() can set a new delay value', cb => {
       var dict = new DictionaryLocal({delay: 100});
       dict.setDelay(250);
       dict.getDictInfos({}, inc);
