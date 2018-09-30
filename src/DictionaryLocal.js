@@ -380,7 +380,7 @@ module.exports = class DictionaryLocal extends Dictionary {
       // pos in the synonym list (=> first-term matches first), then conceptID.
       var sort = (a, b) =>
         a.D - b.D || strcmp(a.type, b.type) || strcmp(a.str, b.str) ||
-        strcmp(a.dictID, b.dictID) || a.p - b.p || a.id - b.id;
+        strcmp(a.dictID, b.dictID) || a.p - b.p || strcmp(a.id, b.id);
 
       // Apply query, then replace each remaining item by a full 'match'-type
       // object, having: entry's `id/dictID/terms/z`,
