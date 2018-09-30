@@ -1,6 +1,6 @@
 {
   "name": "vsm-dictionary-local",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Local (in-memory), full implementation of a VSM-dictionary",
   "main": "src/DictionaryLocal.js",
   "scripts": {
