@@ -132,15 +132,16 @@ function getNewMatches(dict, str, options, input, dictInput, output) {
 
 function matchToString(m) {
   var n = '</span>';
+  var q = '\'';
   var arr = [
-    'type:\''   + m.type,
-    'dictID:\'' + m.dictID,
-    'id:\'<span style="font-weight:800; color:#737373">' + m.id  + n,
-    'str:\'<span style="font-weight:800; color:#a00">'   + m.str + n,
+    'type:\''   + m.type + q,
+    'dictID:\'' + m.dictID + q,
+    'id:\'<span style="font-weight:800; color:#737373">' + m.id  + n + q,
+    'str:\'<span style="font-weight:800; color:#a00">'   + m.str + n + q,
   ];
-  if (m.style)  arr.push('style:\'<span style="color:#66e">' + m.style + n);
-  if (m.descr)  arr.push('descr:\'<span style="color:#772">' + m.descr + n);
-  if (m.z    )  arr.push('z:\'<span style="color:#db8">' +
+  if (m.style)  arr.push('style:\'<span style="color:#66e">' + m.style + n + q);
+  if (m.descr)  arr.push('descr:\'<span style="color:#772">' + m.descr + n + q);
+  if (m.z    )  arr.push('z:<span style="color:#db8">' +
     JSON.stringify(m.z) + n);
   if (m.terms)  arr.push('terms:<span style="color:#bbb">' +
     JSON.stringify(m.terms)
@@ -149,5 +150,5 @@ function matchToString(m) {
       .replace(/"descr"/g, 'descr') +
     n);
 
-  return '{' + arr.join('\', ') + '}';
+  return '{' + arr.join(', ') + '}';
 }
