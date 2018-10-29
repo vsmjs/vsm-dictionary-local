@@ -134,13 +134,17 @@ module.exports = class DictionaryLocal extends Dictionary {
   // --- ADD/UPDATE/DELETE SINGLE DICTINFO ---
 
   _addDictInfo(di) {
-    if (!di.id || !di.name) {
-      return ['dictInfo misses a required property: id or name'];
+    if (!di.id) {
+      return ['dictInfo misses a required property: id'];
     }
     if (this._indexOfDictInfo(di.id) >= 0) {
       return [`dictInfo for '${di.id}' already exists`];
     }
-    var dictInfo = {id: di.id, name: di.name};  // Omit invalid props.
+
+    // Copy props, but omit invalid ones.
+    var dictInfo = { id: di.id };                 // Required prop.
+    if (di.abbrev)  dictInfo.abbrev = di.abbrev;  // Optional prop.
+    if (di.name  )  dictInfo.name   = di.name;    // Opt.
 
     // Assign the optional function; also deserialize it, if it is a String.
     if (di.f_aci)  eval('dictInfo.f_aci = ' + di.f_aci);
@@ -155,7 +159,8 @@ module.exports = class DictionaryLocal extends Dictionary {
     if (index < 0)  return [msgAbsentDictInfo(di.id), null];
 
     var di2 = Object.assign({}, this.dictInfos[index]);  // Clone it.
-    if (di.name)  di2.name = di.name;
+    if (di.abbrev)  di2.abbrev = di.abbrev;
+    if (di.name  )  di2.name   = di.name;
 
     this.dictInfos[index] = di2;
     return [null, di2];
@@ -292,13 +297,9 @@ module.exports = class DictionaryLocal extends Dictionary {
   getDictInfos(options, cb) {
     var o = Object.assign({ filter: {} }, options);
 
-    var filter = di =>
-      (!o.filter.id   || o.filter.id  .includes(di.id  )) &&
-      (!o.filter.name || o.filter.name.includes(di.name));
+    var filter = di => !o.filter.id || o.filter.id.includes(di.id);
 
-    var sort = o.sort == 'name' ?
-      (a, b) => strcmp(a.name, b.name) :
-      (a, b) => strcmp(a.id, b.id);  // Default: sort by `id`.
+    var sort = (a, b) => strcmp(a.id, b.id);  // Default: sort by `id`.
 
     var arr = this._arrayQuery(this.dictInfos, filter, sort, o.page, o.perPage);
     callAsync(cb, this.delay, null, { items: arr });

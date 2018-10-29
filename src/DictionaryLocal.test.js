@@ -18,7 +18,7 @@ describe('DictionaryLocal.js', () => {
   // These dictInfos will be used in most of the tests.
   var di1 = {id: 'A', name: 'Name 1'};
   var di2 = {id: 'B', name: 'Name 2'};
-  var di3 = {id: 'C', name: 'Name 3'};
+  var di3 = {id: 'C', name: 'Name 3', abbrev: 'CN3'};
   var di4 = {id: 'D', name: 'Name 4'};
 
   // These entries will be used in many of the tests.
@@ -42,14 +42,13 @@ describe('DictionaryLocal.js', () => {
   describe('dictInfos: addDictInfos()', () => {
     var di1x = {id: 'A', name: 'Name 1', xx: 1};
     var di5p = {id: '' , name: 'Name 5'};
-    var di6p = {id: 'F', name: ''      };
     var di7s = {id: 'G', name: 'Name 6', // DictInfo, with toy f_*  functions..
       f_aci: 'function (x) { return x * 10; }' };  // ..given as String.
     var di7f = {id: 'G', name: 'Name 6',   // Same one, but how it looks..
       f_aci: function (x) { return x * 10 } };     // ..after adding it.
 
     var di1Err = 'dictInfo for \'A\' already exists';
-    var dipErr = 'dictInfo misses a required property: id or name';
+    var dipErr = 'dictInfo misses a required property: id';
 
     before(() => {
       dict = new DictionaryLocal();
@@ -88,10 +87,10 @@ describe('DictionaryLocal.js', () => {
     });
 
     it('gives an array of errors for multiple adds, with an error for adding ' +
-       'a duplicate, and one for missing `id` or `name`, ' +
+       'a duplicate, and one for missing `id`, ' +
        'and a `null` for one successful add', cb => {
-      dict.addDictInfos([di1, di4, di5p, di6p], err => {
-        err.should.deep.equal([di1Err, null, dipErr, dipErr]);
+      dict.addDictInfos([di1, di4, di5p], err => {
+        err.should.deep.equal([di1Err, null, dipErr]);
         dict.dictInfos.should.deep.equal([di1, di2, di3, di4]);
         count.should.equal(1);
         cb();
@@ -186,7 +185,7 @@ describe('DictionaryLocal.js', () => {
 
   describe('dictInfos: deleteDictInfos()', () => {
     var di2  = {id: 'B', name: 'Name 2'};
-    var di3  = {id: 'C', name: 'Name 3'};
+    var di3  = {id: 'C', name: 'Name 3', abbrev: 'CN3'};
     var di4  = {id: 'D', name: 'Name 4'};
     var di5u = {id: 'E', name: 'Name 5'};
     var e    = {id:'B:01', dictID:'B', terms: [ {str:'Ca2+'} ] };
@@ -621,7 +620,7 @@ describe('DictionaryLocal.js', () => {
   });
 
 
-  describe('-> addDictionaryData()', () => {
+  describe('+ addDictionaryData()', () => {
     var data1, data2, di2u;
     var edErr = 'an entry tries to override dictID \'C\'';
 
@@ -786,23 +785,22 @@ describe('DictionaryLocal.js', () => {
         cb();
       });
     });
-    it('filters for several ids, sorts by name, maps an ' +
+    it('filters for several ids, sorts by default by id, maps an ' +
        'invalid `page` number onto 1, and uses a `perPage` of 2', cb => {
       dict.getDictInfos(
-        {filter: {id: ['D', 'C', 'C2']}, sort: 'name', page: -2, perPage: 2},
+        {filter: {id: ['D', 'C', 'C2']}, page: -2, perPage: 2},
         (err, res) => {
           expect(err).to.equal(null);
-          res.should.deep.equal({items: [di5, di3]});
+          res.should.deep.equal({items: [di3, di5]});
           cb();
         });
     });
-    it('filters for a dictInfo-name, and maps an invalid `perPage` onto ' +
-       '1', cb => {
+    it('maps an invalid `perPage` onto the `perPageDefault`', cb => {
       dict.getDictInfos(
-        {filter: {name: ['Name 2']}, perPage: 0},
+        {perPage: 0},
         (err, res) => {
           expect(err).to.equal(null);
-          res.should.deep.equal({items: [di2]});
+          res.should.deep.equal({items: [di1, di2, di3, di5, di4]});
           cb();
         });
     });
