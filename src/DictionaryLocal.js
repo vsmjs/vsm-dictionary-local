@@ -146,9 +146,6 @@ module.exports = class DictionaryLocal extends Dictionary {
     if (di.abbrev)  dictInfo.abbrev = di.abbrev;  // Optional prop.
     if (di.name  )  dictInfo.name   = di.name;    // Opt.
 
-    // Assign the optional function; also deserialize it, if it is a String.
-    if (di.f_aci)  eval('dictInfo.f_aci = ' + di.f_aci);
-
     this.dictInfos.push(dictInfo);
     return [null];
   }

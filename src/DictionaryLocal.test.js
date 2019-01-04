@@ -42,10 +42,6 @@ describe('DictionaryLocal.js', () => {
   describe('dictInfos: addDictInfos()', () => {
     var di1x = {id: 'A', name: 'Name 1', xx: 1};
     var di5p = {id: '' , name: 'Name 5'};
-    var di7s = {id: 'G', name: 'Name 6', // DictInfo, with toy f_*  functions..
-      f_aci: 'function (x) { return x * 10; }' };  // ..given as String.
-    var di7f = {id: 'G', name: 'Name 6',   // Same one, but how it looks..
-      f_aci: function (x) { return x * 10 } };     // ..after adding it.
 
     var di1Err = 'dictInfo for \'A\' already exists';
     var dipErr = 'dictInfo misses a required property: id';
@@ -96,42 +92,6 @@ describe('DictionaryLocal.js', () => {
         cb();
       });
       count = 1;
-    });
-
-    it('adds a dictInfo with a custom `f_aci`, represented as ' +
-       'a String, and converts it to a real Function', cb => {
-      dict.addDictInfos([di7s], err => {
-        // Note: `dict.dictInfos.should.deep.equal(...)` can not be used here,
-        // because functions-properties (f_*) are never seen as deep-equal.
-        // So here, we test their equality more manually, and by their behavior.
-        // + And we remove this dictInfo afterwards, so that any subsequent
-        //   `dictInfos`-test can avoid this difficulty.
-        var N = 4;
-        var G = di7f.id;
-        dict.dictInfos.should.have.length(5);
-        Object.keys(dict.dictInfos[N]).should.have.length(3);
-        dict.dictInfos[N].id.should.equal(G);
-        dict.dictInfos[N].name.should.equal(di7f.name);
-        dict.dictInfos[N]    .f_aci(1)
-          .should.equal( di7f.f_aci(1) );
-        count.should.equal(1);
-        dict.deleteDictInfos([G], err => {
-          expect(err).to.equal(null);
-          dict.dictInfos.should.deep.equal([di1, di2, di3, di4]);
-          cb();
-        });
-      });
-      count = 1;
-    });
-
-    it('adds a dictInfo with a custom `f_aci`, represented as ' +
-       'a Function', cb => {
-      dict.addDictInfos([di7f], err => {  // Same as above; but only test f_aci.
-        var N = 4;
-        dict.dictInfos[N]    .f_aci(1)
-          .should.equal( di7f.f_aci(1) );
-        dict.deleteDictInfos([di7f.id], cb);
-      });
     });
 
     it('makes a truly async callback, also for an empty array', cb => {
