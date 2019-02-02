@@ -1,5 +1,5 @@
 /*
-Webpack is only used for creating an interactive demo in the browser.
+This Webpack-config is only used for creating an interactive demo in the browser.
 
 It bundles all modules (in-memory),
 starts the webpack development server with live-reload, and
@@ -43,7 +43,7 @@ module.exports = () => ({
                 // `esmodules: true` is necessary, as otherwise Babel causes
                 // the error "class constructors must be invoked with |new|".
                 // So it works only in modern browsers that support ES Modules.
-                ['@babel/preset-env', { targets: { esmodules: true }}]
+                ['@babel/preset-env', { targets: { esmodules: true } }]
               ]
             }
           }

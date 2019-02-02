@@ -63,19 +63,32 @@ in the spec &amp; source code).</span>
 
 <br>
 
-## Installation with NPM for Node.js:
+## Installation
+
+### Node.js
 
 ```
 npm install vsm-dictionary-local
 ```
 
+```
+const VsmDictionaryLocal = require('vsm-dictionary-local');
+```
+
+### Browsers
+
+```
+<script src="https://unpkg.com/vsm-dictionary-local@^2.0.0/dist/vsm-dictionary-local.min.js"></script>
+```
+after which it is accessible as the global variable `VsmDictionaryLocal`.
+
 <br>
 
-## Example use
+## Example use in Node.js
 
 Example that (only):  
-&nbsp;&bull; adds a dictionary-info object,  
-&nbsp;&bull; adds entries (=concepts/IDs + terms),  
+&nbsp;&bull; adds one subdictionary (by adding a dictionary-info object),  
+&nbsp;&bull; adds entries to it (=concepts/IDs + terms),  
 &nbsp;&bull; string-searches for matching terms:
 
 ```javascript
@@ -148,7 +161,7 @@ which gives the same output.
 ## Tests
 
 Run `npm test`, which runs tests with Mocha.  
-Run `npm run testw`, which automatically reruns tests on any file change.
+Run `npm run testw`, which automatically reruns tests when any file changes.
 
 <br>
 
@@ -163,9 +176,14 @@ Run it with: `node demo/demoInNode.js`.
 ## Interactive demo in the browser
 
 Run `npm run demo` to start an interactive demo of (only)
-the string-search functionality.  
+the string-search functionality, based on example data.  
 This opens a browser page with an input-field to search
 on [demoData.js](demo/demoData.js).
 
 The demo works by making a Webpack dev-server bundle all source code 
-(VsmDictionaryLocal and its dependencies) and serve it to the browser.
+(VsmDictionaryLocal and its dependencies) and serve it to the browser.  
+This is useful during development, to see immediate effects of changes
+to the source code (excl. the demo code).
+
+(For normal use in browsers, just include the browser-build via a
+&lt;script&gt;-tag, see above).
