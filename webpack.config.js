@@ -51,7 +51,7 @@ module.exports = (env = {}) => ({
 
   output: {
     path: dist,
-    filename: 'vsm-dictionary-local.min.js' ,
+    filename: 'vsm-dictionary-local.min.js',
     library: 'VsmDictionaryLocal',
     libraryTarget: 'var'
   }
