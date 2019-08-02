@@ -1,6 +1,6 @@
 {
   "name": "vsm-dictionary-local",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "Local (in-memory), full implementation of a VSM-dictionary",
   "main": "src/DictionaryLocal.js",
   "scripts": {
@@ -30,22 +30,22 @@
   },
   "homepage": "https://github.com/vsmjs/vsm-dictionary-local#readme",
   "devDependencies": {
-    "@babel/core": "^7.3.3",
-    "@babel/preset-env": "^7.3.1",
-    "babel-loader": "^8.0.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^1.0.1",
     "copy-webpack-plugin": "^4.6.0",
-    "eslint": "^5.14.0",
+    "eslint": "^5.16.0",
     "html-webpack-plugin": "^3.2.0",
     "mocha": "^5.2.0",
-    "sinon": "^7.2.3",
-    "terser-webpack-plugin": "^1.2.2",
-    "webpack": "^4.29.4",
-    "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.1.14"
+    "sinon": "^7.3.2",
+    "terser-webpack-plugin": "^1.4.1",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
   },
   "dependencies": {
-    "vsm-dictionary": "^2.6.0"
+    "vsm-dictionary": "^2.6.4"
   }
 }
