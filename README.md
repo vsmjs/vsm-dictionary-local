@@ -187,3 +187,9 @@ to the source code (excl. the demo code).
 
 (For normal use in browsers, just include the browser-build via a
 &lt;script&gt;-tag, see above).
+
+<br>
+
+## License
+
+This project is licensed under the AGPL license - see [LICENSE.md](LICENSE.md).
