@@ -21,14 +21,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vsmjs/vsm-dictionary-local"
+    "url": "git+https://github.com/vsm/vsm-dictionary-local"
   },
   "author": "Steven Vercruysse (http://stcruy.com)",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/vsmjs/vsm-dictionary-local/issues"
+    "url": "https://github.com/vsm/vsm-dictionary-local/issues"
   },
-  "homepage": "https://github.com/vsmjs/vsm-dictionary-local#readme",
+  "homepage": "https://github.com/vsm/vsm-dictionary-local#readme",
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",

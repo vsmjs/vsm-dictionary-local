@@ -6,7 +6,7 @@
 
 `vsm-dictionary-local` is a full, local (=in-memory) implementation
 of the 'VsmDictionary' parent-class/interface (from the package
-[`vsm-dictionary`](https://github.com/vsmjs/vsm-dictionary)).
+[`vsm-dictionary`](https://github.com/vsm/vsm-dictionary)).
 
 <br>
 
@@ -14,7 +14,7 @@ of the 'VsmDictionary' parent-class/interface (from the package
 
 - [VSM-sentences](http://scicura.org/vsm/vsm.html)
   are built from terms that are linked to identifiers.
-- The '[`vsm-dictionary`](https://github.com/vsmjs/vsm-dictionary)'
+- The '[`vsm-dictionary`](https://github.com/vsm/vsm-dictionary)'
   package defines a standardized interface,
   for VSM-related tools to communicate with services
   that provide terms+IDs (e.g. a webserver API).
@@ -29,7 +29,7 @@ This is VsmDictionaryLocal:
 
 - It extends the VsmDictionary parent class, and provides
   a concrete implementation that fully implements the vsm-dictionary
-  [specification](https://github.com/vsmjs/vsm-dictionary/blob/master/Dictionary.spec.md).
+  [specification](https://github.com/vsm/vsm-dictionary/blob/master/Dictionary.spec.md).
   - i.e. it has the complete Create, Read, Update, Delete, search,
     sort, filter, etc. functionality for terms, subdictionary-info objects, etc.
 - It does not use an online server for data storage or lookup.
@@ -54,7 +54,7 @@ Because of the above:
 ## Specification
 
 Apart from following the parent class
-[specification](https://github.com/vsmjs/vsm-dictionary/blob/master/Dictionary.spec.md),
+[specification](https://github.com/vsm/vsm-dictionary/blob/master/Dictionary.spec.md),
 VsmDictionaryLocal follows the additional the spec described in
 [DictionaryLocal.spec.md](DictionaryLocal.spec.md).  
 &bull; <span style="font-size: smaller;">
